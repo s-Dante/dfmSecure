@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <main>
-        <h1>Perfil</h1>
-    </main>
-</body>
-</html>
+<x-app-layout>
+    <x-slot:content>
+        <x-profile-card allName="Omar Fernandez" email="[EMAIL_ADDRESS]" phone="123456789" address="123 Main St"
+            url="#" />
+    </x-slot:content>
+</x-app-layout>
