@@ -4,13 +4,23 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use App\Models\Gender;
+use App\Models\Role;
+use App\Models\Fiscal;
+use App\Models\Address;
+use App\Models\Vehicle;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +29,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'father_lasname',
+        'mother_lastname',
+        'username',        
         'email',
         'password',
+        'phone',
+        'gender',
+        'role'
     ];
 
     /**
@@ -41,8 +57,36 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'name' => 'string',
+            'father_lasname' => 'string',
+            'mother_lasname' => 'string',
+            'username' => 'string',
+            'email' => 'string',
             'password' => 'hashed',
+            'phone' => 'string',
+            'gender_id' => 'integer',
+            'role_id' => 'integer',
+            'email_verified_at' => 'datetime',
         ];
+    }
+
+    public function gender(): HasOne {
+        return $this->hasOne(Gender::class);
+    }
+
+    public function role(): HasOne {
+        return $this->hasOne(Role::class);
+    }
+
+    public function fiscal(): HasOne {
+        return $this->hasOne(Fiscal::class);
+    }
+
+    public function address(): HasMany {
+        return $this->hasMany(Address::class);
+    }
+
+    public function vehicle(): HasMany {
+        return $this->hasMany(Vehicle::class);
     }
 }
