@@ -132,14 +132,14 @@
                     <a href="#planes" class="{{ $styles['btn_hero_primary'] }}">
                         Ver Planes
                     </a>
-                    <a href="#" class="{{ $styles['btn_hero_secondary'] }}">
+                    <a href="#services" class="{{ $styles['btn_hero_secondary'] }}">
                         Saber más
                     </a>
                 </div>
             </div>
         </section>
 
-        <section class="{{ $styles['section_bg'] }}">
+        <section id="services" class="{{ $styles['section_bg'] }}">
             <div class="{{ $styles['container'] }}">
                 <div class="{{ $styles['section_header'] }}">
                     <h2 class="{{ $styles['section_subtitle'] }}">Por qué elegirnos</h2>

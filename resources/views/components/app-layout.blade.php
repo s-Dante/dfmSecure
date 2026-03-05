@@ -1,3 +1,11 @@
+@php
+    $styles = [
+        'body' => 'font-sans antialiased text-text-dark bg-primary h-screen w-full overflow-hidden flex selection:bg-accent selection:text-white',
+        'main_content' => 'flex-1 flex flex-col h-full overflow-hidden',
+        'scrollable_area' => 'flex-1 overflow-y-auto p-6 lg:p-10',
+    ];
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -10,19 +18,30 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head-scripts')
 </head>
 
-<body>
+<body class="{{ $styles['body'] }}">
+    <!-- Sidebar Navigation -->
     <x-navigation-bar />
 
-    <main>
-        {{ $content }}
-    </main>
+    <!-- Main Content Area -->
+    <div class="{{ $styles['main_content'] }}">
+
+        <!-- Header could go here if needed in the future -->
+
+        <!-- Scrollable content -->
+        <main class="{{ $styles['scrollable_area'] }}">
+            {{ $content ?? $slot ?? '' }}
+        </main>
+
+    </div>
+
+    @stack('scripts')
 </body>
 
 </html>

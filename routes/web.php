@@ -83,8 +83,12 @@ Route::get("/sinister-edit", function () {
  * Rutas para el supervisor
  */
 Route::get("/search", function () {
-    return view('supervisor.search');
+    return view('supervisor.sinister-search');
 })->name('search');
+
+Route::get("/supervisor/manage", function () {
+    return view('supervisor.sinister-manage');
+})->name('sinisterManage');
 
 
 /**

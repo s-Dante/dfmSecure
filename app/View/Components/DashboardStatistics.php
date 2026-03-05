@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class profile-card extends Component
+class DashboardStatistics extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class profile-card extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.profile-card');
+        return view('components.dashboard-statistics');
     }
 }
