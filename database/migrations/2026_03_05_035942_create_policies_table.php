@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,7 +16,7 @@ return new class extends Migration
             $table->string('status');
             $table->date('begin_validity');
             $table->date('end_validity');
-            $table->foreignId('vehicle_id')->constrained('vehicls');
+            $table->foreignId('vehicle_id')->constrained('vehicles');
             $table->foreignId('insured_id')->constrained('users');
             $table->foreignId('plan_id')->constrained('plans');
             $table->timestamps();

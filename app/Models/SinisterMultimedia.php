@@ -30,8 +30,8 @@ class SinisterMultimedia extends Model
     {
         return [
             'type' => 'string',
-            'blob_file' => 'longText',
-            'path_file' => 'lognText',
+            'blob_file' => 'string',
+            'path_file' => 'string',
             'description' => 'text',
             'mime' => 'string',
             'size' => 'string',

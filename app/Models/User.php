@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -29,14 +30,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'father_lasname',
+        'father_lastname',
         'mother_lastname',
-        'username',        
+        'username',
         'email',
         'password',
         'phone',
-        'gender',
-        'role'
+        'gender_id',
+        'role_id'
     ];
 
     /**
@@ -58,8 +59,8 @@ class User extends Authenticatable
     {
         return [
             'name' => 'string',
-            'father_lasname' => 'string',
-            'mother_lasname' => 'string',
+            'father_lastname' => 'string',
+            'mother_lastname' => 'string',
             'username' => 'string',
             'email' => 'string',
             'password' => 'hashed',
@@ -70,23 +71,28 @@ class User extends Authenticatable
         ];
     }
 
-    public function gender(): HasOne {
-        return $this->hasOne(Gender::class);
+    public function gender(): BelongsTo
+    {
+        return $this->belongsTo(Gender::class);
     }
 
-    public function role(): HasOne {
-        return $this->hasOne(Role::class);
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 
-    public function fiscal(): HasOne {
+    public function fiscal(): HasOne
+    {
         return $this->hasOne(Fiscal::class);
     }
 
-    public function address(): HasMany {
+    public function address(): HasMany
+    {
         return $this->hasMany(Address::class);
     }
 
-    public function vehicle(): HasMany {
+    public function vehicle(): HasMany
+    {
         return $this->hasMany(Vehicle::class);
     }
 }

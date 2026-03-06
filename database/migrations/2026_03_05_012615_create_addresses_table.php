@@ -6,8 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 use App\Enums\AddressTypeEnum;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -26,7 +25,7 @@ return new class extends Migration
             $table->string('hometown');
             $table->string('street');
             $table->string('external_number');
-            $table->string('internal_number');
+            $table->string('internal_number')->nullable();
             $table->string('zip_code');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();

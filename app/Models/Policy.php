@@ -27,7 +27,8 @@ class Policy extends Model
         'plan_id'
     ];
 
-    protected function casts(): array {
+    protected function casts(): array
+    {
         return [
             'folio' => 'uuid',
             'status' => 'string',
@@ -39,15 +40,18 @@ class Policy extends Model
         ];
     }
 
-    public function vehicle(): BelongsTo {
+    public function vehicle(): BelongsTo
+    {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function user(): BelongsTo {
-        return $this->belongsTo(User::class);
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'insured_id');
     }
 
-    public function plan(): BelongsTo {
+    public function plan(): BelongsTo
+    {
         return $this->belongsTo(Plan::class);
     }
 }

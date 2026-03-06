@@ -23,20 +23,23 @@ class SinisterComment extends Model
         'user_id'
     ];
 
-    protected function casts(): array {
+    protected function casts(): array
+    {
         return [
-            'text' => 'longText',
-            'date' => 'dateTime',
+            'text' => 'string',
+            'date' => 'datetime',
             'sinister_id' => 'integer',
             'user_id' => 'integer'
         ];
     }
 
-    public function sinister(): BelongsTo {
+    public function sinister(): BelongsTo
+    {
         return $this->belongsTo(Sinister::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }
