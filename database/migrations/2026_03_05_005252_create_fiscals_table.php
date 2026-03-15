@@ -16,14 +16,14 @@ return new class extends Migration
     {
         Schema::create('fiscals', function (Blueprint $table) {
             $table->id();
-            $table->string('rfc')->unique();
+            $table->string('rfc', 13)->unique();
             $table->enum('fiscal_type', [
                 FiscalTypeEnum::LEGAL_PERSON->value,
                 FiscalTypeEnum::NATURAL_PERSON->value
             ])->default(FiscalTypeEnum::NATURAL_PERSON->value);
             $table->string('company_name')->nullable(); //razon social
-            $table->string('tax_regime', 3);
-            $table->foreignId('user_id')->constrained('users');
+            $table->string('tax_regime', 5);
+            $table->foreignId('user_id')->constrained('users')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

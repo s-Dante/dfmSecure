@@ -2,8 +2,12 @@
 
 namespace App\Enums;
 
+use App\Traits\EnumHelper;
+
 enum FiscalTypeEnum: string
 {
+    use EnumHelper;
+
     case LEGAL_PERSON = 'legal_person';
     case NATURAL_PERSON = 'natural_person';
 
@@ -13,12 +17,5 @@ enum FiscalTypeEnum: string
             self::LEGAL_PERSON => 'Persona Moral',
             self::NATURAL_PERSON => 'Persona Fisica'
         };
-    }
-
-    public static function forSelect(): array
-    {
-        return collect(self::cases())
-            ->mapWithKeys(fn($case) => [$case->value => $case->label()])
-            ->toArray();
     }
 }

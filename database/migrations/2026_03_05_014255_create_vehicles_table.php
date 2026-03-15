@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->string('year');
+            $table->year('year');
             $table->string('brand');
             $table->string('sub_brand');
             $table->string('version');
             $table->string('color');
-            $table->string('vin')->unique();
-            $table->string('plate')->unique();
-            $table->foreignId('user_id')->constrained('users');
+            $table->string('vin', 17)->unique();
+            $table->string('plate', 10)->unique();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('vin');
+            $table->index('plate');
         });
     }
 

@@ -12,8 +12,7 @@ return new class extends Migration {
     {
         Schema::create('sinister_comments', function (Blueprint $table) {
             $table->id();
-            $table->longText('text');
-            $table->dateTime('date');
+            $table->longText('comment');
             $table->foreignId('sinister_id')->constrained('sinisters');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();

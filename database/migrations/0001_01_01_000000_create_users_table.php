@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Enums\GenderEnum;
+
 return new class extends Migration
 {
     /**
@@ -16,11 +18,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('father_lastname');
             $table->string('mother_lastname')->nullable();
-            $table->string('username')->unique();
+            $table->string('username', 30)->unique();
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('phone')->unique();
-            // $table->foreignId('gender_id')->constrained('genders')->onDelete('cascade');
+            $table->string('phone', 20)->unique();
+            $table->enum('gender_id', [
+                GenderEnum::MALE->value,
+                GenderEnum::FEMALE->value,
+                GenderEnum::OTHER->value
+            ])->default(GenderEnum::OTHER->value);
             // $table->tinyInteger('role_id')->constained('roles')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

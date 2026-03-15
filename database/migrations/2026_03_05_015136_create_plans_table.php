@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Enums\PlanStatusEnum;
+
 return new class extends Migration
 {
     /**
@@ -14,8 +16,13 @@ return new class extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('status'); //Revisar bien si combiene mejor tener tabla extra o bien, tener un enum
+            $table->enum('status', [
+                PlanStatusEnum::ACTIVE->value,
+                PlanStatusEnum::INACTIVE->value,
+                PlanStatusEnum::DELETED->value,
+            ])->default(PlanStatusEnum::ACTIVE->value);
             $table->json('info');
+            $table->decimal('price',10,2);
             $table->timestamps();
             $table->softDeletes();
         });

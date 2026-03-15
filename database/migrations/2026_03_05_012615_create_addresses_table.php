@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 use App\Enums\AddressTypeEnum;
 
-return new class extends Migration {
+return new class extends Migration 
+{
     /**
      * Run the migrations.
      */
@@ -18,16 +19,16 @@ return new class extends Migration {
                 AddressTypeEnum::FISCAL->value,
                 AddressTypeEnum::HOME->value,
                 AddressTypeEnum::OFFICE->value
-            ]);
+            ])->default(AddressTypeEnum::HOME->value);
             $table->string('country');
             $table->string('state');
             $table->string('city');
-            $table->string('hometown');
+            $table->string('neighborhood');
             $table->string('street');
-            $table->string('external_number');
-            $table->string('internal_number')->nullable();
-            $table->string('zip_code');
-            $table->foreignId('user_id')->constrained('users');
+            $table->string('external_number', 10);
+            $table->string('internal_number', 10)->nullable();
+            $table->string('zip_code', 10);
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

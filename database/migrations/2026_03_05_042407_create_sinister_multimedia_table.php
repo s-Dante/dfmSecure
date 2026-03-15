@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Enums\SinisterMultimediaTypeEnum;
+
 return new class extends Migration
 {
     /**
@@ -13,13 +15,17 @@ return new class extends Migration
     {
         Schema::create('sinister_multimedia', function (Blueprint $table) {
             $table->id();
-            $table->string('type'); //enum
+            $table->enum('type', [
+                SinisterMultimediaTypeEnum::PHOTO->value,
+                SinisterMultimediaTypeEnum::VIDEO->value,
+                SinisterMultimediaTypeEnum::DOCUMENT->value,
+            ]);
             $table->longText('blob_file')->nullable();
             $table->longText('path_file')->nullable();
             $table->text('description')->nullable();
             $table->string('mime');
-            $table->string('size');
-            $table->string('thumbnail');
+            $table->integer('size');
+            $table->string('thumbnail')->nullable();
             $table->foreignId('sinister_id')->constrained('sinisters');
             $table->timestamps();
             $table->softDeletes();
