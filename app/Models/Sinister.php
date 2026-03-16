@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use App\Models\User;
 use App\Models\Policy;
+use App\Models\SinisterMultimedia;
+use App\Models\SinisterComment;
+
+use App\Enums\SinisterStatusEnum;
 
 class Sinister extends Model
 {
@@ -34,9 +39,9 @@ class Sinister extends Model
             'occur_date' => 'date',
             'report_date' => 'date',
             'close_date' => 'date',
-            'description' => 'text',
+            'description' => 'string',
             'location' => 'string',
-            'status' => 'string',
+            'status' => SinisterStatusEnum::class,
             'adjuster_id' => 'integer',
             'supervisor_id' => 'integer',
             'policy_id' => 'integer'
@@ -56,5 +61,15 @@ class Sinister extends Model
     public function policy(): BelongsTo
     {
         return $this->belongsTo(Policy::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(SinisterComment::class);
+    }
+
+    public function multimedia(): HasMany
+    {
+        return $this->hasMany(SinisterMultimedia::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AddressTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,17 +23,18 @@ class Address extends Model
         'country',
         'state',
         'city',
-        'hometown',
+        'neighborhood',
         'street',
         'external_number',
         'internal_number',
-        'zip_code'
+        'zip_code',
+        'user_id'
     ];
 
     protected function casts(): array
     {
         return [
-            'type' => FiscalTypeEnum::class,
+            'type' => AddressTypeEnum::class,
             'country' => 'string',
             'state' => 'string',
             'city' => 'string',

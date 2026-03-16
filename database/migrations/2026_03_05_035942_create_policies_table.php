@@ -15,15 +15,10 @@ return new class extends Migration {
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
             $table->uuid('folio')->unique();
-            $table->enum('status', [
-                PolicyStatusEnum::PENDING->value,
-                PolicyStatusEnum::ACTIVE->value,
-                PolicyStatusEnum::CANCELLED->value,
-                PolicyStatusEnum::EXPIRED->value,
-            ])->default(PolicyStatusEnum::PENDING->value);
+            $table->string('status')->default(PolicyStatusEnum::PENDING->value);
             $table->date('begin_validity');
             $table->date('end_validity');
-            $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
+            $table->foreignId('vehicle_id')->constrained('insured_vehicles')->cascadeOnDelete();
             $table->foreignId('insured_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('plan_id')->constrained('plans')->cascadeOnDelete();
             $table->timestamps();

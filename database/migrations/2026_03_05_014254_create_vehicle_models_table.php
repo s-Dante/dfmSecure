@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use App\Enums\PlanStatusEnum;
-
 return new class extends Migration
 {
     /**
@@ -13,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('vehicle_models', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('status')->default(PlanStatusEnum::ACTIVE->value);
-            $table->json('info');
-            $table->decimal('price',10,2);
+            $table->year('year');
+            $table->string('brand');
+            $table->string('sub_brand');
+            $table->string('version');
+            $table->string('color');
+            $table->unique(['year', 'brand', 'sub_brand', 'version', 'color']);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('vehicle_models');
     }
 };

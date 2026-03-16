@@ -15,11 +15,7 @@ return new class extends Migration
     {
         Schema::create('sinister_multimedia', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', [
-                SinisterMultimediaTypeEnum::PHOTO->value,
-                SinisterMultimediaTypeEnum::VIDEO->value,
-                SinisterMultimediaTypeEnum::DOCUMENT->value,
-            ]);
+            $table->string('type');
             $table->longText('blob_file')->nullable();
             $table->longText('path_file')->nullable();
             $table->text('description')->nullable();

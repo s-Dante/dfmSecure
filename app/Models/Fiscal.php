@@ -23,15 +23,17 @@ class Fiscal extends Model
         'fiscal_type',
         'company_name',
         'tax_regime',
+        'user_id',
     ];
 
-    public function casts(): array 
+    protected function casts(): array 
     {
         return [
             'rfc' => 'string',
             'fiscal_type' => FiscalTypeEnum::class,
             'company_name' => 'string',
             'tax_regime' => TaxRegimeEnum::class,
+            'user_id' => 'integer',
         ];
     }
 

@@ -16,8 +16,8 @@ trait EnumHelper
         return array_column(self::cases(), 'value');
     }
 
-    public function is(self $status): bool
+    public function is(self $case): bool
     {
-        return $this === $status;
+        return $this === $case;
     }
 }

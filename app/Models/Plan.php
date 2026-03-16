@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\Policy;
 
+use App\Enums\PlanStatusEnum;
+
 class Plan extends Model
 {
     /** @use HasFactory<\Database\Factories\PlanFactory> */
@@ -24,8 +26,8 @@ class Plan extends Model
     protected function casts(): array {
         return [
             'name' => 'string',
-            'status' => 'string',
-            'info' => 'json'
+            'status' => PlanStatusEnum::class,
+            'info' => 'array'
         ];
     }
 

@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Models\Vehicle;
+use App\Models\InsuredVehicle;
 use App\Models\User;
 use App\Models\Plan;
+
+use App\Enums\PolicyStatusEnum;
 
 class Policy extends Model
 {
@@ -30,8 +32,8 @@ class Policy extends Model
     protected function casts(): array
     {
         return [
-            'folio' => 'uuid',
-            'status' => 'string',
+            'folio' => 'string',
+            'status' => PolicyStatusEnum::class,
             'begin_validity' => 'date',
             'end_validity' => 'date',
             'vehicle_id' => 'integer',
@@ -40,12 +42,27 @@ class Policy extends Model
         ];
     }
 
-    public function vehicle(): BelongsTo
+    public function isActive(): bool
     {
-        return $this->belongsTo(Vehicle::class);
+        return now()->between($this->begin_validity, $this->end_validity);
     }
 
-    public function user(): BelongsTo
+    public function isExpired(): bool
+    {
+        return now()->greaterThan($this->end_validity);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', PolicyStatusEnum::ACTIVE);
+    }
+
+    public function vehicle(): BelongsTo
+    {
+        return $this->belongsTo(InsuredVehicle::class);
+    }
+
+    public function insured(): BelongsTo
     {
         return $this->belongsTo(User::class, 'insured_id');
     }

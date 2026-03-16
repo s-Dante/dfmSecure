@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\Sinister;
 
+use App\Enums\SinisterMultimediaTypeEnum;
+
 class SinisterMultimedia extends Model
 {
     /** @use HasFactory<\Database\Factories\SinisterMultimediaFactory> */
@@ -29,12 +31,12 @@ class SinisterMultimedia extends Model
     public function casts(): array
     {
         return [
-            'type' => 'string',
+            'type' => SinisterMultimediaTypeEnum::class,
             'blob_file' => 'string',
             'path_file' => 'string',
-            'description' => 'text',
+            'description' => 'string',
             'mime' => 'string',
-            'size' => 'string',
+            'size' => 'integer',
             'thumbnail' => 'string',
             'sinister_id' => 'integer'
         ];

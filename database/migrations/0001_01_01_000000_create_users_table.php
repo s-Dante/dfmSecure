@@ -19,14 +19,12 @@ return new class extends Migration
             $table->string('father_lastname');
             $table->string('mother_lastname')->nullable();
             $table->string('username', 30)->unique();
+            $table->longText('profile_picture')->nullable();
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone', 20)->unique();
-            $table->enum('gender_id', [
-                GenderEnum::MALE->value,
-                GenderEnum::FEMALE->value,
-                GenderEnum::OTHER->value
-            ])->default(GenderEnum::OTHER->value);
+            $table->date('birth_date');
+            $table->string('gender_id')->default(GenderEnum::OTHER->value);
             // $table->tinyInteger('role_id')->constained('roles')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

@@ -11,20 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
+        Schema::create('insured_vehicles', function (Blueprint $table) {
             $table->id();
-            $table->year('year');
-            $table->string('brand');
-            $table->string('sub_brand');
-            $table->string('version');
-            $table->string('color');
             $table->string('vin', 17)->unique();
             $table->string('plate', 10)->unique();
+            $table->foreignId('vehicle_model_id')->constrained('vehicle_models')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
             $table->index('vin');
             $table->index('plate');
+            $table->index('vehicle_model_id');
         });
     }
 

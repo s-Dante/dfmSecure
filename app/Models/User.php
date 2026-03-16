@@ -11,11 +11,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use App\Models\Gender;
 use App\Models\Role;
 use App\Models\Fiscal;
 use App\Models\Address;
-use App\Models\Vehicle;
+use App\Models\InsuredVehicle;
+
+use App\Enums\AddressTypeEnum;
 
 class User extends Authenticatable
 {
@@ -71,9 +72,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function gender(): BelongsTo
+    public function getFullNameAttribute(): string
     {
-        return $this->belongsTo(Gender::class);
+        return "{$this->name} {$this->father_lastname} {$this->mother_lastname}";
+    }
+
+    public function mainAddress()
+    {
+        return $this->hasOne(Address::class)->where('type', AddressTypeEnum::HOME);
     }
 
     public function role(): BelongsTo
@@ -81,18 +87,18 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function fiscal(): HasOne
+    public function fiscalData(): HasOne
     {
         return $this->hasOne(Fiscal::class);
     }
 
-    public function address(): HasMany
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
     }
 
-    public function vehicle(): HasMany
+    public function vehicles(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(InsuredVehicle::class);
     }
 }
