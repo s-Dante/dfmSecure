@@ -2,20 +2,21 @@
 
 namespace Database\Factories;
 
+use App\Enums\GenderEnum;
+use App\Models\Address;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
-use App\Models\Role;
-use App\Models\Address;
-
-use App\Enums\GenderEnum;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
+    protected $model = User::class;
+
     /**
      * The current password being used by the factory.
      */
@@ -28,52 +29,29 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $fatherLastname = $this->faker->lastName();
-        $motherLastname = $this->faker->lastName();
-        $username = fake()->unique()->userName();
-        $phone = $this->faker->phoneNumber();
-        $birthDate = $this->faker->date();
-        $genders = GenderEnum::values();
-        $gender = fake()->randomElement($genders);
+        $firstName    = fake()->firstName();
+        $fatherLastname = fake()->lastName();
+        $motherLastname = fake()->lastName();
 
-        $profilePicture = null;
-        $hasProfilePicture = $this->faker->boolean(50);
-        if($hasProfilePicture){
-            $images = [
-                'database/imgs/profilepictures/Img_3.jpg',
-                'database/imgs/profilepictures/Img_4.jpg',
-                'database/imgs/profilepictures/Img_5.jpg',
-                'database/imgs/profilepictures/Img_6.jpg',
-                'database/imgs/profilepictures/Img_7.jpg',
-                'database/imgs/profilepictures/Img_8.jpg',
-                'database/imgs/profilepictures/Img_9.jpg',
-                'database/imgs/profilepictures/Img_10.jpg'
-            ];
-
-            $path = public_path(fake()->randomElement($images));
-
-            $profilePicture = file_get_contents($path);
-        }
-
-        $roleId = Role::inRandomOrder()->first()->id;
-
-        $addresId = Address::inRandomOrder()->first()->id;
+        // Generate username: first letter + father lastname, lowercase, no spaces
+        $baseUsername = strtolower(substr($firstName, 0, 1) . $fatherLastname);
+        $username     = Str::slug($baseUsername) . fake()->numberBetween(1, 999);
 
         return [
-            'name' => fake()->name(),
+            'name'            => $firstName,
             'father_lastname' => $fatherLastname,
-            'mother_lastname' => $motherLastname,
-            'username' => $username,
-            'profile_picture' => $profilePicture,
-            'email' => fake()->unique()->safeEmail(),
+            'mother_lastname' => fake()->boolean(80) ? $motherLastname : null,
+            'username'        => $username,
+            'profile_picture' => null,
+            'email'           => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'phone' => $phone,
-            'birth_date' => $birthDate,
-            'gender' => $gender,
-            'role_id' => $roleId,
-            'address_id' => $addresId,
-            'remember_token' => Str::random(10),
+            'password'        => static::$password ??= Hash::make('password'),
+            'phone'           => fake()->unique()->numerify('55########'),
+            'birth_date'      => fake()->dateTimeBetween('-70 years', '-18 years')->format('Y-m-d'),
+            'gender'          => fake()->randomElement(GenderEnum::values()),
+            'role_id'         => Role::inRandomOrder()->first()?->id ?? Role::factory(),
+            'address_id'      => Address::inRandomOrder()->first()?->id ?? Address::factory(),
+            'remember_token'  => Str::random(10),
         ];
     }
 
@@ -82,8 +60,51 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Assign a specific role by name.
+     */
+    public function withRole(string $roleName): static
+    {
+        return $this->state(function (array $attributes) use ($roleName) {
+            $role = Role::where('name', $roleName)->first();
+            return ['role_id' => $role?->id];
+        });
+    }
+
+    /**
+     * State for admin users.
+     */
+    public function admin(): static
+    {
+        return $this->withRole('admin');
+    }
+
+    /**
+     * State for adjuster users.
+     */
+    public function adjuster(): static
+    {
+        return $this->withRole('adjuster');
+    }
+
+    /**
+     * State for supervisor users.
+     */
+    public function supervisor(): static
+    {
+        return $this->withRole('supervisor');
+    }
+
+    /**
+     * State for insured users.
+     */
+    public function insured(): static
+    {
+        return $this->withRole('insured');
     }
 }

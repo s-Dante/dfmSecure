@@ -17,19 +17,17 @@ class SinisterComment extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'text',
-        'date',
+        'comment',
         'sinister_id',
-        'user_id'
+        'user_id',
     ];
 
     protected function casts(): array
     {
         return [
-            'text' => 'string',
-            'date' => 'datetime',
+            'comment' => 'string',
             'sinister_id' => 'integer',
-            'user_id' => 'integer'
+            'user_id' => 'integer',
         ];
     }
 

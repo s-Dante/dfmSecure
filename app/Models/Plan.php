@@ -20,14 +20,16 @@ class Plan extends Model
     protected $fillable = [
         'name',
         'status',
-        'info'
+        'info',
+        'price',
     ];
 
     protected function casts(): array {
         return [
             'name' => 'string',
             'status' => PlanStatusEnum::class,
-            'info' => 'array'
+            'info' => 'array',
+            'price' => 'decimal:2',
         ];
     }
 

@@ -21,11 +21,14 @@ return new class extends Migration
             $table->text('description');
             $table->string('location');
             $table->string('status')->default(SinisterStatusEnum::REPORTED->value);
-            $table->foreignId('adjuster_id')->constrained('users');
-            $table->foreignId('supervisor_id')->constrained('users')->nullable();
+            $table->foreignId('adjuster_id')->constrained('users')->restrictOnDelete();
+            $table->foreignId('supervisor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('policy_id')->constrained('policies')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('adjuster_id');
+            $table->index('supervisor_id');
+            $table->index('policy_id');
         });
     }
 

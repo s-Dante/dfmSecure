@@ -5,18 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-use App\Models\Role;
-use App\Models\Fiscal;
-use App\Models\Address;
-use App\Models\InsuredVehicle;
-
-use App\Enums\AddressTypeEnum;
 
 class User extends Authenticatable
 {
@@ -73,7 +66,7 @@ class User extends Authenticatable
             'birth_date' => 'date',
             'gender_id' => 'integer',
             'role_id' => 'integer',
-            'adress_id' => 'integer',
+            'address_id' => 'integer',
             'email_verified_at' => 'datetime',
         ];
     }
@@ -83,24 +76,19 @@ class User extends Authenticatable
         return "{$this->name} {$this->father_lastname} {$this->mother_lastname}";
     }
 
-    public function mainAddress()
-    {
-        return $this->hasOne(Address::class)->where('type', AddressTypeEnum::HOME);
-    }
-
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(Address::class);
+    }
+
     public function fiscalData(): HasOne
     {
         return $this->hasOne(Fiscal::class);
-    }
-
-    public function address(): HasOne
-    {
-        return $this->hasOne(Address::class);
     }
 
     public function vehicles(): HasMany

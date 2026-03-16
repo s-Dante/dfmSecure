@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use App\Enums\FiscalTypeEnum;
 
 use App\Models\User;
 
@@ -37,7 +36,7 @@ class Address extends Model
             'country' => 'string',
             'state' => 'string',
             'city' => 'string',
-            'hometown' => 'string',
+            'neighborhood' => 'string',
             'street' => 'string',
             'external_number' => 'string',
             'internal_number' => 'string',

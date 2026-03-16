@@ -2,25 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
-use App\Models\Role;
-
 use App\Enums\RoleEnum;
+use App\Models\Role;
+use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Uses firstOrCreate to remain idempotent (safe to run multiple times).
      */
     public function run(): void
     {
-        $roles = RoleEnum::values();
-        foreach($roles as $role){
-            Role::factory()->create([
-                'name' => $role
-            ]);
+        foreach (RoleEnum::cases() as $role) {
+            Role::firstOrCreate(['name' => $role->value]);
         }
     }
 }
+
