@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+use Database\Factories\AddressFactory;
+
 class AddressSeeder extends Seeder
 {
     /**
@@ -12,6 +14,6 @@ class AddressSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        AddressFactory::new()->count(10)->create();
     }
 }
