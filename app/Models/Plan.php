@@ -24,7 +24,8 @@ class Plan extends Model
         'price',
     ];
 
-    protected function casts(): array {
+    protected function casts(): array
+    {
         return [
             'name' => 'string',
             'status' => PlanStatusEnum::class,
@@ -33,7 +34,8 @@ class Plan extends Model
         ];
     }
 
-    public function policy(): HasMany {
+    public function policies(): HasMany
+    {
         return $this->hasMany(Policy::class);
     }
 }

@@ -37,17 +37,20 @@ class UserFactory extends Factory
         $baseUsername = strtolower(substr($firstName, 0, 1) . $fatherLastname);
         $username     = Str::slug($baseUsername) . fake()->numberBetween(1, 999);
 
-        // Obtenemos una imagen aleatoria. Si se requiere blob:
-        // 'profile_picture' => file_get_contents(public_path('database/imgs/profilepictures/' . $randomImage)),
+        // Obtenemos una imagen aleatoria. 
         $profilePictures = ['Img_10.jpg', 'Img_3.jpg', 'Img_4.jpg', 'Img_5.jpg', 'Img_6.jpg', 'Img_7.jpg', 'Img_8.jpg', 'Img_9.jpg'];
         $randomImage = fake()->randomElement($profilePictures);
+        
+        $path = 'database/imgs/profilepictures/' . $randomImage;
+        $saveAsBlob = fake()->boolean(40); // 40% de que sea guardada como Blob
 
         return [
             'name'            => $firstName,
             'father_lastname' => $fatherLastname,
             'mother_lastname' => fake()->boolean(80) ? $motherLastname : null,
             'username'        => $username,
-            'profile_picture' => 'database/imgs/profilepictures/' . $randomImage,
+            'profile_picture_url'  => !$saveAsBlob ? $path : null,
+            'profile_picture_blob' => $saveAsBlob ? file_get_contents(public_path($path)) : null,
             'email'           => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password'        => static::$password ??= Hash::make('password'),

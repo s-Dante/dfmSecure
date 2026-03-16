@@ -13,7 +13,7 @@ enum SinisterStatusEnum: string
     case IN_REVIEW = 'in_review';
     case APPROVED = 'approved';
     case APPROVED_WITH_DEDUCTIBLE = 'approved_with_deductible';
-    case APPROVED_WITHOUT_DEDUCTIBLE = 'approved_wothout_deductible';
+    case APPROVED_WITHOUT_DEDUCTIBLE = 'approved_without_deductible';
     case APPLIES_PAYMENT_FOR_REPAIRS = 'applies_payment_for_repairs';
     case TOTAL_LOSS = 'total_loss';
     case CLOSED = 'closed';

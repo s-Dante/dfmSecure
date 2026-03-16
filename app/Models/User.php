@@ -27,7 +27,8 @@ class User extends Authenticatable
         'father_lastname',
         'mother_lastname',
         'username',
-        'profile_picture',
+        'profile_picture_url',
+        'profile_picture_blob',
         'email',
         'password',
         'phone',
@@ -59,7 +60,7 @@ class User extends Authenticatable
             'father_lastname' => 'string',
             'mother_lastname' => 'string',
             'username' => 'string',
-            'profile_picture' => 'string',
+            'profile_picture_url' => 'string',
             'email' => 'string',
             'password' => 'hashed',
             'phone' => 'string',
@@ -95,4 +96,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(InsuredVehicle::class);
     }
+
+    public function policies(): HasMany
+    {
+        return $this->hasMany(Policy::class, 'insured_id');
+    }
+
 }

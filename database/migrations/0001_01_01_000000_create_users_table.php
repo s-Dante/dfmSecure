@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 use App\Enums\GenderEnum;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('father_lastname');
             $table->string('mother_lastname')->nullable();
             $table->string('username', 30)->unique();
-            $table->longText('profile_picture')->nullable();
+            $table->string('profile_picture_url')->nullable();
+            $table->binary('profile_picture_blob')->nullable();
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone', 20)->unique();
@@ -31,6 +32,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        // Aseguramos que sea LONGBLOB o MEDIUMBLOB en MySQL
+        DB::statement('ALTER TABLE users MODIFY profile_picture_blob LONGBLOB');
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
