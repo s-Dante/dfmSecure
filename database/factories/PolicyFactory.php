@@ -27,13 +27,25 @@ class PolicyFactory extends Factory
         $beginDate = fake()->dateTimeBetween('-2 years', 'now');
         $endDate   = (clone $beginDate)->modify('+1 year');
 
+        // Aseguramos que el vehículo pertenezca al usuario que compra la póliza
+        $user = User::inRandomOrder()->first() ?? User::factory()->create();
+        $vehicle = InsuredVehicle::where('user_id', $user->id)->inRandomOrder()->first() 
+                   ?? InsuredVehicle::factory()->create(['user_id' => $user->id]);
+
+        /*
+         * Si en un futuro permites que un usuario asegure el vehículo de alguien más, 
+         * la lógica sería simplemente:
+         * $user = User::inRandomOrder()->first() ?? User::factory()->create();
+         * $vehicle = InsuredVehicle::inRandomOrder()->first() ?? InsuredVehicle::factory()->create();
+         */
+
         return [
             'folio'          => (string) Str::uuid(),
             'status'         => PolicyStatusEnum::ACTIVE->value,
             'begin_validity' => $beginDate->format('Y-m-d'),
             'end_validity'   => $endDate->format('Y-m-d'),
-            'vehicle_id'     => InsuredVehicle::inRandomOrder()->first()?->id ?? InsuredVehicle::factory(),
-            'insured_id'     => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'vehicle_id'     => $vehicle->id,
+            'insured_id'     => $user->id,
             'plan_id'        => Plan::inRandomOrder()->first()?->id ?? Plan::factory(),
         ];
     }

@@ -50,24 +50,38 @@ class SinisterFactory extends Factory
     {
         $occurDate  = fake()->dateTimeBetween('-1 year', '-1 week');
         $reportDate = fake()->dateTimeBetween($occurDate, 'now');
-        $status     = fake()->randomElement(SinisterStatusEnum::values());
+        
+        $policy = Policy::inRandomOrder()->first() ?? Policy::factory()->create();
+
+        // Si ya tiene un siniestro, o si es muy antiguo (más de 2 meses), lo cerramos "casi" siempre.
+        // Sí es posible (y lógico) tener 2 siniestros abiertos a la vez, pero es raro.
+        $hasPreviousSinister = Sinister::where('policy_id', $policy->id)->exists();
+        $isOld = $reportDate < now()->subMonths(2);
+
+        if ($hasPreviousSinister || $isOld) {
+            $status = fake()->randomElement([SinisterStatusEnum::CLOSED->value, SinisterStatusEnum::REJECTED->value]);
+        } else {
+            $status = fake()->randomElement(SinisterStatusEnum::values());
+        }
+
         $isClosed   = in_array($status, [SinisterStatusEnum::CLOSED->value, SinisterStatusEnum::REJECTED->value]);
 
-        $adjuster   = User::inRandomOrder()->first();
-        $supervisor = User::where('id', '!=', $adjuster?->id)->inRandomOrder()->first();
+        $adjuster   = User::inRandomOrder()->first() ?? User::factory()->create();
+        $supervisor = User::where('id', '!=', $adjuster->id)->inRandomOrder()->first() ?? User::factory()->create();
 
         return [
-            'occur_date'   => $occurDate->format('Y-m-d'),
-            'report_date'  => $reportDate->format('Y-m-d'),
+            // Cuidado: Si la DB espera un formato date (Y-m-d), el formato 'd-m-Y' dará error en MySQL.
+            'occur_date'   => $occurDate->format('d-m-Y'),
+            'report_date'  => $reportDate->format('d-m-Y'),
             'close_date'   => $isClosed
-                ? fake()->dateTimeBetween($reportDate, 'now')->format('Y-m-d')
+                ? fake()->dateTimeBetween($reportDate, 'now')->format('d-m-Y')
                 : null,
             'description'  => fake()->randomElement(self::DESCRIPTIONS),
             'location'     => fake()->randomElement(self::LOCATIONS),
             'status'       => $status,
-            'adjuster_id'  => $adjuster?->id ?? User::factory(),
-            'supervisor_id' => fake()->boolean(70) ? $supervisor?->id : null,
-            'policy_id'    => Policy::inRandomOrder()->first()?->id ?? Policy::factory(),
+            'adjuster_id'  => $adjuster->id,
+            'supervisor_id'=> fake()->boolean(70) ? $supervisor->id : null,
+            'policy_id'    => $policy->id,
         ];
     }
 

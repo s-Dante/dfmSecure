@@ -36,10 +36,21 @@ class SinisterCommentFactory extends Factory
      */
     public function definition(): array
     {
+        $sinister = Sinister::inRandomOrder()->first() ?? Sinister::factory()->create();
+
+        // Obtener dueños/involucrados del siniestro
+        $policy = $sinister->policy;
+        $insuredId = $policy ? $policy->insured_id : User::factory()->create()->id;
+        $adjusterId = $sinister->adjuster_id;
+        $supervisorId = $sinister->supervisor_id;
+
+        $possibleUsers = array_filter([$insuredId, $adjusterId, $supervisorId]);
+        $userId = fake()->randomElement($possibleUsers);
+
         return [
-            'comment'     => fake()->randomElement(self::COMMENTS),
-            'sinister_id' => Sinister::inRandomOrder()->first()?->id ?? Sinister::factory(),
-            'user_id'     => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'comment'     => fake()->paragraph(), // Lorem ipsum
+            'sinister_id' => $sinister->id,
+            'user_id'     => $userId,
         ];
     }
 }

@@ -20,33 +20,34 @@ class AddressFactory extends Factory
      */
     public function definition(): array
     {
-        $mexicanStates = [
-            'Aguascalientes', 'Baja California', 'Baja California Sur', 'Campeche',
-            'Chiapas', 'Chihuahua', 'Ciudad de México', 'Coahuila', 'Colima',
-            'Durango', 'Guanajuato', 'Guerrero', 'Hidalgo', 'Jalisco',
-            'Estado de México', 'Michoacán', 'Morelos', 'Nayarit', 'Nuevo León',
-            'Oaxaca', 'Puebla', 'Querétaro', 'Quintana Roo', 'San Luis Potosí',
-            'Sinaloa', 'Sonora', 'Tabasco', 'Tamaulipas', 'Tlaxcala',
-            'Veracruz', 'Yucatán', 'Zacatecas',
-        ];
-
-        $neighborhoods = [
-            'Centro', 'Del Valle', 'Polanco', 'Condesa', 'Roma Norte', 'Roma Sur',
-            'Coyoacán', 'Xochimilco', 'Tepito', 'La Merced', 'Santa Fe',
-            'Pedregal', 'Las Lomas', 'Narvarte', 'Doctores', 'Guerrero',
-            'Colinas del Bosque', 'Jardines del Bosque', 'San Ángel', 'Peralvillo',
-        ];
+        /* 
+         * Si quieres añadir datos específicos de México y usar random, puedes descomentar lo siguiente:
+         * 
+         * $mexicanStates = ['Aguascalientes', 'Baja California', '...'];
+         * $neighborhoods = ['Centro', 'Del Valle', 'Polanco', '...'];
+         * 
+         * En `zip_pcode` (código postal), se usó `str_pad` porque en México los códigos postales 
+         * son de 5 dígitos fijos, y si faker devuleve '345', se rellenaba con ceros a la izquierda 
+         * para que quedara '00345' y así no hubiera problemas en base de datos.
+         * 
+         * return [
+         *     'country'         => 'México',
+         *     'state'           => fake()->randomElement($mexicanStates),
+         *     'zip_code'        => str_pad((string) fake()->numberBetween(1000, 99999), 5, '0', STR_PAD_LEFT),
+         *     ...
+         * ];
+         */
 
         return [
             'type'            => fake()->randomElement(AddressTypeEnum::values()),
-            'country'         => 'México',
-            'state'           => fake()->randomElement($mexicanStates),
+            'country'         => fake()->country(),
+            'state'           => fake()->state(),
             'city'            => fake()->city(),
-            'neighborhood'    => fake()->randomElement($neighborhoods),
+            'neighborhood'    => fake()->streetSuffix(), // Faker no tiene neighborhood global
             'street'          => fake()->streetName(),
-            'external_number' => (string) fake()->numberBetween(1, 9999),
+            'external_number' => fake()->buildingNumber(),
             'internal_number' => fake()->boolean(30) ? (string) fake()->numberBetween(1, 50) : null,
-            'zip_code'        => str_pad((string) fake()->numberBetween(1000, 99999), 5, '0', STR_PAD_LEFT),
+            'zip_code'        => fake()->postcode(),
         ];
     }
 

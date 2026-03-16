@@ -6,6 +6,7 @@ use App\Enums\SinisterMultimediaTypeEnum;
 use App\Models\Sinister;
 use App\Models\SinisterMultimedia;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\File;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SinisterMultimedia>
@@ -47,22 +48,48 @@ class SinisterMultimediaFactory extends Factory
      */
     public function definition(): array
     {
-        $type   = fake()->randomElement(SinisterMultimediaTypeEnum::values());
+        // Prioridad a fotos y videos
+        $type   = fake()->randomElement([SinisterMultimediaTypeEnum::PHOTO->value, SinisterMultimediaTypeEnum::VIDEO->value]);
         $config = self::TYPE_CONFIG[$type];
-        $mime   = fake()->randomElement($config['mimes']);
-        $ext    = $config['ext'][array_search($mime, $config['mimes'])];
-        $path   = $config['dir'] . '/' . fake()->uuid() . '.' . $ext;
+        
+        $baseDir = 'database/sinister/multimedia/' . $config['dir'];
+        $absoluteDir = public_path($baseDir);
+        
+        if (File::exists($absoluteDir)) {
+            $files = File::files($absoluteDir);
+        } else {
+            $files = [];
+        }
+
+        if (count($files) > 0) {
+            $file = fake()->randomElement($files);
+            $path = $baseDir . '/' . $file->getFilename();
+            $mime = mime_content_type($file->getPathname()) ?: 'application/octet-stream';
+            $size = $file->getSize();
+            // Extraer info de thumbnail (falsa para el ejemplo si es que no existe uno real)
+            $thumbnail = 'database/sinister/multimedia/thumbnails/thumb_' . $file->getFilename();
+            $blobContent = file_get_contents($file->getPathname());
+        } else {
+            // Fallback en caso de que la carpeta esté vacía
+            $mime   = fake()->randomElement($config['mimes']);
+            $ext    = $config['ext'][array_search($mime, $config['mimes'])];
+            $path   = $baseDir . '/' . fake()->uuid() . '.' . $ext;
+            $size   = fake()->numberBetween(50_000, 5_000_000);
+            $thumbnail = 'database/sinister/multimedia/thumbnails/' . fake()->uuid() . '.jpg';
+            $blobContent = null;
+        }
+
+        // Aleatoriamente decide si guardar como blob o como path (o ambos, dependiendo tu DB)
+        $saveAsBlob = fake()->boolean(40); // 40% probabilidad de guardar solo blob
 
         return [
             'type'        => $type,
-            'blob_file'   => null, // Binary not stored during seeding
-            'path_file'   => $path,
+            'blob_file'   => $saveAsBlob ? $blobContent : null,
+            'path_file'   => !$saveAsBlob ? $path : null,
             'description' => fake()->optional(0.6)->sentence(),
             'mime'        => $mime,
-            'size'        => fake()->numberBetween(50_000, 5_000_000),
-            'thumbnail'   => in_array($type, [SinisterMultimediaTypeEnum::PHOTO->value, SinisterMultimediaTypeEnum::VIDEO->value])
-                ? 'sinisters/thumbnails/' . fake()->uuid() . '.jpg'
-                : null,
+            'size'        => $size,
+            'thumbnail'   => $thumbnail,
             'sinister_id' => Sinister::inRandomOrder()->first()?->id ?? Sinister::factory(),
         ];
     }

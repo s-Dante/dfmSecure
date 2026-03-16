@@ -37,17 +37,23 @@ class UserFactory extends Factory
         $baseUsername = strtolower(substr($firstName, 0, 1) . $fatherLastname);
         $username     = Str::slug($baseUsername) . fake()->numberBetween(1, 999);
 
+        // Obtenemos una imagen aleatoria. Si se requiere blob:
+        // 'profile_picture' => file_get_contents(public_path('database/imgs/profilepictures/' . $randomImage)),
+        $profilePictures = ['Img_10.jpg', 'Img_3.jpg', 'Img_4.jpg', 'Img_5.jpg', 'Img_6.jpg', 'Img_7.jpg', 'Img_8.jpg', 'Img_9.jpg'];
+        $randomImage = fake()->randomElement($profilePictures);
+
         return [
             'name'            => $firstName,
             'father_lastname' => $fatherLastname,
             'mother_lastname' => fake()->boolean(80) ? $motherLastname : null,
             'username'        => $username,
-            'profile_picture' => null,
+            'profile_picture' => 'database/imgs/profilepictures/' . $randomImage,
             'email'           => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password'        => static::$password ??= Hash::make('password'),
-            'phone'           => fake()->unique()->numerify('55########'),
-            'birth_date'      => fake()->dateTimeBetween('-70 years', '-18 years')->format('Y-m-d'),
+            'phone'           => fake()->phoneNumber(),
+            // Cuidado: Si la DB espera un date, el formato 'd-m-Y' (dd-mm-yyyy) dará error en MySQL
+            'birth_date'      => fake()->dateTimeBetween('-70 years', '-18 years')->format('d-m-Y'),
             'gender'          => fake()->randomElement(GenderEnum::values()),
             'role_id'         => Role::inRandomOrder()->first()?->id ?? Role::factory(),
             'address_id'      => Address::inRandomOrder()->first()?->id ?? Address::factory(),
@@ -78,6 +84,8 @@ class UserFactory extends Factory
 
     /**
      * State for admin users.
+     * (Estos métodos son útiles en testing o seeders para crear un usuario 
+     * ya con un rol en específico sin tener que consultar la BD manualmente)
      */
     public function admin(): static
     {
