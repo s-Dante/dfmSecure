@@ -34,11 +34,14 @@ class User extends Authenticatable
         'father_lastname',
         'mother_lastname',
         'username',
+        'profile_picture',
         'email',
         'password',
         'phone',
-        'gender_id',
-        'role_id'
+        'birth_date',
+        'gender',
+        'role_id',
+        'adress_id',
     ];
 
     /**
@@ -63,11 +66,14 @@ class User extends Authenticatable
             'father_lastname' => 'string',
             'mother_lastname' => 'string',
             'username' => 'string',
+            'profile_picture' => 'string',
             'email' => 'string',
             'password' => 'hashed',
             'phone' => 'string',
+            'birth_date' => 'date',
             'gender_id' => 'integer',
             'role_id' => 'integer',
+            'adress_id' => 'integer',
             'email_verified_at' => 'datetime',
         ];
     }
@@ -92,9 +98,9 @@ class User extends Authenticatable
         return $this->hasOne(Fiscal::class);
     }
 
-    public function addresses(): HasMany
+    public function address(): HasOne
     {
-        return $this->hasMany(Address::class);
+        return $this->hasOne(Address::class);
     }
 
     public function vehicles(): HasMany

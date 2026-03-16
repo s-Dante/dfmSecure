@@ -15,6 +15,7 @@ return new class extends Migration
             //$table->foreignId('gender_id')->constrained('genders')->onDelete('cascade')->after('phone');
             $table->foreignId('role_id')->constrained('roles')->restrictOnDelete()->after('gender_id');
             $table->index('role_id');
+            $table->foreignId('adress_id')->constrained('adresses')->restrictOnDelete()->after('role_id');
         });
     }
 

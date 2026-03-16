@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('external_number', 10);
             $table->string('internal_number', 10)->nullable();
             $table->string('zip_code', 10);
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -6,7 +6,7 @@ use App\Enums\AddressTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use App\Enums\FiscalTypeEnum;
 
@@ -28,7 +28,6 @@ class Address extends Model
         'external_number',
         'internal_number',
         'zip_code',
-        'user_id'
     ];
 
     protected function casts(): array
@@ -43,12 +42,11 @@ class Address extends Model
             'external_number' => 'string',
             'internal_number' => 'string',
             'zip_code' => 'string',
-            'user_id' => 'integer'
         ];
     }
 
-    public function user(): BelongsTo
+    public function users(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class);
     }
 }
