@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('father_lastname');
             $table->string('mother_lastname')->nullable();
             $table->string('username', 30)->unique();
-            $table->string('profile_picture_url')->nullable();
+            $table->longText('profile_picture_url')->nullable();
             $table->binary('profile_picture_blob')->nullable();
             $table->string('email')->unique();
             $table->string('password');

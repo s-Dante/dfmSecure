@@ -12,17 +12,6 @@ class VehicleModelFactory extends Factory
 {
     protected $model = VehicleModel::class;
 
-    private const CATALOG = [
-        ['brand' => 'Nissan', 'sub_brand' => 'Kicks', 'versions' => ['Advance', 'Premiums', 'Super']],
-        ['brand' => 'Nissan', 'sub_brand' => 'Versa', 'versions' => ['Sedan', 'Premiums', 'Super']],
-        ['brand' => 'Toyota', 'sub_brand' => 'Corolla', 'versions' => ['Base', 'S', 'SE', 'XSE']],
-        ['brand' => 'VolksWagen', 'sub_brand' => 'Jetta', 'versions' => ['TrendLine', 'ComfortLine', 'HighLine']],
-        ['brand' => 'VolksWagen', 'sub_brand' => 'Tiguan', 'versions' => ['TrendLine', 'ComfortLine', 'HighLine']],
-        ['brand' => 'VolksWagen', 'sub_brand' => 'Taos', 'versions' => ['TrendLine', 'ComfortLine', 'HighLine']],
-        ['brand' => 'Honda', 'sub_brand' => 'Civic', 'versions' => ['LX', 'EX', 'EX-T', 'Turbo']],
-        ['brand' => 'Honda', 'sub_brand' => 'CR-V', 'versions' => ['LX', 'EX', 'EX-T', 'Turbo']],
-    ];
-
     private const COLORS = [
         'Blanco', 'Negro', 'Rojo', 'Gris', 'Plata', 'Arena', 'Azul Marino',
         'Verde', 'Amarillo', 'Café', 'Naranja', 'Beige', 'Vino', 'Dorado',
@@ -34,15 +23,20 @@ class VehicleModelFactory extends Factory
      */
     public function definition(): array
     {
-        $vehicle = fake()->randomElement(self::CATALOG);
+        $vehicles = json_decode(file_get_contents(database_path('data/vehicles.json')), true);
+
+        $type = fake()->randomKey($vehicles);
+        $year = fake()->randomKey($vehicles[$type]);
+        $brand = fake()->randomKey($vehicles[$type][$year]);
+        $subBrand = fake()->randomKey($vehicles[$type][$year][$brand]);
+        $version = fake()->randomElement($vehicles[$type][$year][$brand][$subBrand]);
 
         return [
-            'year' => fake()->numberBetween(2000, 2025),
-            'brand' => $vehicle['brand'],
-            'sub_brand' => $vehicle['sub_brand'],
-            'version' => fake()->randomElement($vehicle['versions']),
+            'year' => $year,
+            'brand' => $brand,
+            'sub_brand' => $subBrand,
+            'version' => $version,
             'color' => fake()->randomElement(self::COLORS),
         ];
     }
 }
-

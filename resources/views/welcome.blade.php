@@ -18,6 +18,8 @@
 </head>
 
 @php
+    $plansData = json_decode(file_get_contents(database_path('data/plans.json')), true);
+
     $styles = [
         'body' => 'bg-primary text-text-dark font-sans antialiased selection:bg-accent selection:text-white',
 
@@ -223,124 +225,53 @@
                 </div>
 
                 <div class="{{ $styles['plans_grid'] }}">
-                    <!-- Plan Básico -->
-                    <div class="{{ $styles['plan_card'] }}">
-                        <h3 class="{{ $styles['plan_h3'] }}">Básico</h3>
-                        <p class="{{ $styles['plan_desc'] }}">La protección legal e indispensable para circular.</p>
+                    @foreach ($plansData as $plan)
+                        @php
+                            // Determine if this is the featured plan ('Plus' or according to design needs)
+                            $isFeatured = $plan['name'] === 'Plus';
+                            
+                            $cardClass = $isFeatured ? $styles['plan_card_featured'] : $styles['plan_card'];
+                            $h3Class = $isFeatured ? $styles['plan_h3_featured'] : $styles['plan_h3'];
+                            $descClass = $isFeatured ? $styles['plan_desc_featured'] : $styles['plan_desc'];
+                            $deductibleBoxClass = $isFeatured ? $styles['plan_deductible_box_featured'] : $styles['plan_deductible_box'];
+                            $deductibleLabelClass = $isFeatured ? $styles['plan_deductible_label_featured'] : $styles['plan_deductible_label'];
+                            $deductibleClass = $isFeatured ? $styles['plan_deductible_featured'] : $styles['plan_deductible'];
+                            $liClass = $isFeatured ? $styles['plan_li_featured'] : $styles['plan_li'];
+                            $btnClass = $isFeatured ? $styles['plan_btn_featured'] : $styles['plan_btn'];
+                            
+                            $descriptions = [
+                                'Básico' => 'La protección legal e indispensable para circular.',
+                                'Plus' => 'Protección equilibrada y recomendada para tu patrimonio.',
+                                'Amplio' => 'La cobertura total para máxima tranquilidad.'
+                            ];
+                            $desc = $descriptions[$plan['name']] ?? 'La mejor cobertura para ti.';
+                        @endphp
+                        
+                        <div class="{{ $cardClass }}">
+                            @if($isFeatured)
+                                <div class="{{ $styles['plan_badge'] }}">Más Popular</div>
+                            @endif
+                            <h3 class="{{ $h3Class }}">{{ $plan['name'] }}</h3>
+                            <p class="{{ $descClass }}">{{ $desc }}</p>
 
-                        <div class="{{ $styles['plan_deductible_box'] }}">
-                            <div class="{{ $styles['plan_deductible_label'] }}">Deducible Daños</div>
-                            <div class="{{ $styles['plan_deductible'] }}">10%</div>
+                            <div class="{{ $deductibleBoxClass }}">
+                                <div class="{{ $deductibleLabelClass }}">Deducible Daños</div>
+                                <div class="{{ $deductibleClass }}">{{ $plan['deducible_danos'] }}</div>
+                            </div>
+
+                            <ul class="{{ $styles['plan_list'] }}">
+                                @foreach($plan['beneficios'] as $benefit)
+                                    <li class="{{ $liClass }}">
+                                        <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>{{ $benefit }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                            <a href="{{ route('signIn') }}" class="{{ $btnClass }}">Seleccionar {{ $plan['name'] }}</a>
                         </div>
-
-                        <ul class="{{ $styles['plan_list'] }}">
-                            <li class="{{ $styles['plan_li'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Responsabilidad Civil</span>
-                            </li>
-                            <li class="{{ $styles['plan_li'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Asistencia Legal</span>
-                            </li>
-                            <li class="{{ $styles['plan_li'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Gastos Médicos Ocupantes</span>
-                            </li>
-                        </ul>
-                        <a href="{{ route('signIn') }}" class="{{ $styles['plan_btn'] }}">Seleccionar Básico</a>
-                    </div>
-
-                    <!-- Plan Plus (Featured) -->
-                    <div class="{{ $styles['plan_card_featured'] }}">
-                        <div class="{{ $styles['plan_badge'] }}">Más Popular</div>
-                        <h3 class="{{ $styles['plan_h3_featured'] }}">Plus</h3>
-                        <p class="{{ $styles['plan_desc_featured'] }}">Protección equilibrada y recomendada para tu
-                            patrimonio.</p>
-
-                        <div class="{{ $styles['plan_deductible_box_featured'] }}">
-                            <div class="{{ $styles['plan_deductible_label_featured'] }}">Deducible Daños</div>
-                            <div class="{{ $styles['plan_deductible_featured'] }}">5%</div>
-                        </div>
-
-                        <ul class="{{ $styles['plan_list'] }}">
-                            <li class="{{ $styles['plan_li_featured'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Robo Total (Deducible 10%)</span>
-                            </li>
-                            <li class="{{ $styles['plan_li_featured'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Daños Materiales</span>
-                            </li>
-                            <li class="{{ $styles['plan_li_featured'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Coberturas del Plan Básico</span>
-                            </li>
-                        </ul>
-                        <a href="{{ route('signIn') }}" class="{{ $styles['plan_btn_featured'] }}">Seleccionar Plus</a>
-                    </div>
-
-                    <!-- Plan Amplio -->
-                    <div class="{{ $styles['plan_card'] }}">
-                        <h3 class="{{ $styles['plan_h3'] }}">Amplio</h3>
-                        <p class="{{ $styles['plan_desc'] }}">La cobertura total para máxima tranquilidad.</p>
-
-                        <div class="{{ $styles['plan_deductible_box'] }}">
-                            <div class="{{ $styles['plan_deductible_label'] }}">Deducible Daños</div>
-                            <div class="{{ $styles['plan_deductible'] }}">3%</div>
-                        </div>
-
-                        <ul class="{{ $styles['plan_list'] }}">
-                            <li class="{{ $styles['plan_li'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Cero Deducible con Tercero Culpable</span>
-                            </li>
-                            <li class="{{ $styles['plan_li'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Auto Sustituto Amparado</span>
-                            </li>
-                            <li class="{{ $styles['plan_li'] }}">
-                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>Coberturas del Plan Plus</span>
-                            </li>
-                        </ul>
-                        <a href="{{ route('signIn') }}" class="{{ $styles['plan_btn'] }}">Seleccionar Amplio</a>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>

@@ -14,50 +14,6 @@ class PlanFactory extends Factory
 {
     protected $model = Plan::class;
 
-    private const PLANS = [
-        [
-            'name' => 'Básico',
-            'price' => '10000',
-            'info' => [
-                'coverage' => 'Responsabilidad civil',
-                'medical_limit' => 100000,
-                'material_limit' => 50000,
-                'deductible' => 10,
-                'benefits' => ['Asistencia vial', 'Robo total'],
-            ],
-        ],
-        [
-            'name' => 'Amplio',
-            'price' => '20000',
-            'info' => [
-                'coverage' => 'Cobertura amplia',
-                'medical_limit' => 200000,
-                'material_limit' => 100000,
-                'deductible' => 5,
-                'benefits' => ['Asistencia vial', 'Robo total', 'Daños materiales', 'Gastos medicos'],
-            ],
-        ],
-        [
-            'name' => 'Total',
-            'price' => '30000',
-            'info' => [
-                'coverage' => 'Cobertura total',
-                'medical_limit' => 300000,
-                'material_limit' => 200000,
-                'deductible' => 0,
-                'benefits' => [
-                    'Asistencia vial',
-                    'Robo total',
-                    'Robo parcial',
-                    'Daños materiales',
-                    'Gastos medicos amplificados',
-                    'Auto sustituto',
-                    'Defensa juridica',
-                ],
-            ],
-        ],
-    ];
-
     /**
      * Define the model's default state.
      *
@@ -65,43 +21,53 @@ class PlanFactory extends Factory
      */
     public function definition(): array
     {
-        $plan = fake()->randomElement(self::PLANS);
+        $plans = json_decode(file_get_contents(database_path('data/plans.json')), true);
+        $plan = fake()->randomElement($plans);
 
         return [
             'name' => $plan['name'],
             'status' => PlanStatusEnum::ACTIVE->value,
-            'info' => $plan['info'],
-            'price' => $plan['price'],
+            'info' => $plan,
+            'price' => $plan['costo']['anual'],
         ];
     }
 
     public function basic(): static
     {
-        $plan = self::PLANS[0];
-        return $this->state(fn() => [
-            'name' => $plan['name'],
-            'price' => $plan['price'],
-            'info' => $plan['info'],
-        ]);
+        return $this->state(function (array $attributes) {
+            $plans = json_decode(file_get_contents(database_path('data/plans.json')), true);
+            $plan = $plans[0];
+            return [
+                'name' => $plan['name'],
+                'price' => $plan['costo']['anual'],
+                'info' => $plan,
+            ];
+        });
     }
 
     public function amplio(): static
     {
-        $plan = self::PLANS[1];
-        return $this->state(fn() => [
-            'name' => $plan['name'],
-            'price' => $plan['price'],
-            'info' => $plan['info'],
-        ]);
+        return $this->state(function (array $attributes) {
+            $plans = json_decode(file_get_contents(database_path('data/plans.json')), true);
+            $plan = $plans[2];
+            return [
+                'name' => $plan['name'],
+                'price' => $plan['costo']['anual'],
+                'info' => $plan,
+            ];
+        });
     }
 
     public function premium(): static
     {
-        $plan = self::PLANS[2];
-        return $this->state(fn() => [
-            'name' => $plan['name'],
-            'price' => $plan['price'],
-            'info' => $plan['info'],
-        ]);
+        return $this->state(function (array $attributes) {
+            $plans = json_decode(file_get_contents(database_path('data/plans.json')), true);
+            $plan = $plans[1];
+            return [
+                'name' => $plan['name'],
+                'price' => $plan['costo']['anual'],
+                'info' => $plan,
+            ];
+        });
     }
 }

@@ -1,0 +1,74 @@
+{
+  "Automóvil": {
+    "2024": {
+      "Nissan": {
+        "Versa": ["Sense MT", "Advance CVT", "Exclusive CVT"],
+        "Sentra": ["Sense", "Advance", "SR", "SR Platinum"]
+      },
+      "Toyota": {
+        "Corolla": ["Base MT", "LE CVT", "XLE", "SE"],
+        "Camry": ["LE", "SE", "XLE", "Hybrid"]
+      },
+      "Volkswagen": {
+        "Jetta": ["Trendline", "Comfortline", "Sportline", "GLI"],
+        "Virtus": ["Trendline MT", "Comfortline Tiptronic", "Highline"]
+      }
+    },
+    "2023": {
+      "Chevrolet": {
+        "Onix": ["LS", "LT", "Premier"],
+        "Aveo": ["LS MT", "LT MT", "LT AT"]
+      },
+      "Honda": {
+        "Civic": ["I-Style", "Sport", "Touring"],
+        "City": ["LX", "Sport", "Prime", "Touring"]
+      }
+    }
+  },
+  "SUV": {
+    "2024": {
+      "Kia": {
+        "Seltos": ["EX", "EX Pack", "SX", "SXL"],
+        "Sportage": ["EX", "EX Pack", "SXL"]
+      },
+      "Honda": {
+        "CR-V": ["Turbo", "Turbo Plus", "Touring"],
+        "HR-V": ["Uniq", "Sport", "Touring"]
+      }
+    },
+    "2023": {
+      "Mazda": {
+        "CX-5": ["i Sport", "i Grand Touring", "Signature"],
+        "CX-30": ["i Sport", "i Grand Touring", "Signature"]
+      }
+    }
+  },
+  "Camioneta": {
+    "2024": {
+      "Ford": {
+        "Ranger": ["XL", "XLT", "Lariat", "Wildtrak"],
+        "F-150": ["XL", "XLT", "Lariat", "Tremor", "Raptor"]
+      },
+      "Toyota": {
+        "Hilux": ["Chasis Cabina", "Doble Cabina SR", "Doble Cabina DSL 4x4"],
+        "Tacoma": ["SR", "TRD Sport", "TRD Off-Road"]
+      }
+    }
+  },
+  "Motocicleta": {
+    "2024": {
+      "Italika": {
+        "WS150": ["Sport", "Base"],
+        "250Z": ["Negro", "Grafito"]
+      },
+      "Honda": {
+        "Navi": ["S", "Base"],
+        "CBR250R": ["Repsol", "Tricolor"]
+      },
+      "Yamaha": {
+        "R15": ["Blue", "Dark Midnight"],
+        "MT-03": ["Ice Fluo", "Midnight Black"]
+      }
+    }
+  }
+}

@@ -1,0 +1,116 @@
+[
+    {
+        "name": "Básico",
+        "suma_asegurada": 1000000,
+        "costo": {
+            "anual": 4500,
+            "semestral": 2300,
+            "trimestral": 1200,
+            "bimestral": 850
+        },
+        "beneficios": [
+            "Responsabilidad Civil",
+            "Asistencia Legal",
+            "Gastos Médicos Ocupantes"
+        ],
+        "deducible_danos": "10%",
+        "cobertura_vehiculo": {
+            "danos_materiales": false,
+            "perdida_total": false,
+            "cristales": false,
+            "robo_total": false,
+            "robo_parcial": false,
+            "asistencia_vial": true
+        },
+        "cobertura_personal_terceros": {
+            "responsabilidad_civil": true,
+            "proteccion_legal": true,
+            "gastos_medicos": true,
+            "extension_rc": false
+        },
+        "coberturas_adicionales": {
+            "auto_sustituto": false,
+            "danos_llantas": false,
+            "llaves": false,
+            "cero_deducible": false,
+            "siempre_agencia": false,
+            "robo_parcial_plus": false
+        }
+    },
+    {
+        "name": "Plus",
+        "suma_asegurada": 3000000,
+        "costo": {
+            "anual": 8900,
+            "semestral": 4500,
+            "trimestral": 2300,
+            "bimestral": 1600
+        },
+        "beneficios": [
+            "Robo Total (Deducible 10%)",
+            "Daños Materiales",
+            "Coberturas del Plan Básico"
+        ],
+        "deducible_danos": "5%",
+        "cobertura_vehiculo": {
+            "danos_materiales": true,
+            "perdida_total": true,
+            "cristales": true,
+            "robo_total": true,
+            "robo_parcial": false,
+            "asistencia_vial": true
+        },
+        "cobertura_personal_terceros": {
+            "responsabilidad_civil": true,
+            "proteccion_legal": true,
+            "gastos_medicos": true,
+            "extension_rc": true
+        },
+        "coberturas_adicionales": {
+            "auto_sustituto": false,
+            "danos_llantas": false,
+            "llaves": false,
+            "cero_deducible": false,
+            "siempre_agencia": false,
+            "robo_parcial_plus": false
+        }
+    },
+    {
+        "name": "Amplio",
+        "suma_asegurada": 5000000,
+        "costo": {
+            "anual": 13500,
+            "semestral": 6900,
+            "trimestral": 3500,
+            "bimestral": 2400
+        },
+        "beneficios": [
+            "Cero Deducible con Tercero Culpable",
+            "Auto Sustituto Amparado",
+            "Coberturas del Plan Plus"
+        ],
+        "deducible_danos": "3%",
+        "cobertura_vehiculo": {
+            "danos_materiales": true,
+            "perdida_total": true,
+            "cristales": true,
+            "robo_total": true,
+            "robo_parcial": true,
+            "asistencia_vial": true
+        },
+        "cobertura_personal_terceros": {
+            "responsabilidad_civil": true,
+            "proteccion_legal": true,
+            "gastos_medicos": true,
+            "extension_rc": true
+        },
+        "coberturas_adicionales": {
+            "auto_sustituto": true,
+            "danos_llantas": true,
+            "llaves": true,
+            "cero_deducible": true,
+            "siempre_agencia": true,
+            "robo_parcial_plus": true
+        }
+    }
+]

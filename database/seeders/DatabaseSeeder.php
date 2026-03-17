@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             PolicySeeder::class,
             SinisterSeeder::class,
             SinisterCommentSeeder::class,
-            //SinisterMultimediaSeeder::class,
+            SinisterMultimediaSeeder::class,
         ]);
     }
 }
