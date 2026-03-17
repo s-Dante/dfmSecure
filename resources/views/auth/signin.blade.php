@@ -26,53 +26,67 @@
             <p class="{{ $styles['subheading'] }}">Ingresa tus datos para asegurar tus propiedades.</p>
         </div>
 
-        <form action="{{ route('signIn') }}" method="POST" class="{{ $styles['form'] }}">
+        <form action="{{ route('signIn.post') }}" method="POST" class="{{ $styles['form'] }}">
             @csrf
 
             <div class="{{ $styles['grid_2_cols'] }}">
                 <div>
                     <label for="name" class="{{ $styles['label'] }}">Nombre</label>
-                    <input type="text" name="name" id="name" class="{{ $styles['input'] }}" placeholder="Tu nombre"
-                        required>
+                    <input type="text" name="name" id="name" class="{{ $styles['input'] }} @error('name') border-red-500 @enderror" placeholder="Tu nombre"
+                        value="{{ old('name') }}" required>
+                    @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="username" class="{{ $styles['label'] }}">Usuario</label>
-                    <input type="text" name="username" id="username" class="{{ $styles['input'] }}"
-                        placeholder="mi_usuario" required>
+                    <input type="text" name="username" id="username" class="{{ $styles['input'] }} @error('username') border-red-500 @enderror"
+                        placeholder="mi_usuario" value="{{ old('username') }}" required>
+                    @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div class="{{ $styles['grid_2_cols'] }}">
                 <div>
                     <label for="father_lastname" class="{{ $styles['label'] }}">Apellido Paterno</label>
-                    <input type="text" name="father_lastname" id="father_lastname" class="{{ $styles['input'] }}"
-                        placeholder="Pérez" required>
+                    <input type="text" name="father_lastname" id="father_lastname" class="{{ $styles['input'] }} @error('father_lastname') border-red-500 @enderror"
+                        placeholder="Pérez" value="{{ old('father_lastname') }}" required>
+                    @error('father_lastname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="mother_lastname" class="{{ $styles['label'] }}">Apellido Materno</label>
-                    <input type="text" name="mother_lastname" id="mother_lastname" class="{{ $styles['input'] }}"
-                        placeholder="García" required>
+                    <input type="text" name="mother_lastname" id="mother_lastname" class="{{ $styles['input'] }} @error('mother_lastname') border-red-500 @enderror"
+                        placeholder="García" value="{{ old('mother_lastname') }}">
+                    @error('mother_lastname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div class="{{ $styles['grid_2_cols'] }}">
                 <div>
                     <label for="email" class="{{ $styles['label'] }}">Correo electrónico</label>
-                    <input type="email" name="email" id="email" class="{{ $styles['input'] }}"
-                        placeholder="tu@correo.com" required>
+                    <input type="email" name="email" id="email" class="{{ $styles['input'] }} @error('email') border-red-500 @enderror"
+                        placeholder="tu@correo.com" value="{{ old('email') }}" required>
+                    @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="phone" class="{{ $styles['label'] }}">Teléfono</label>
-                    <input type="tel" name="phone" id="phone" class="{{ $styles['input'] }}" placeholder="55 1234 5678"
-                        required>
+                    <input type="tel" name="phone" id="phone" class="{{ $styles['input'] }} @error('phone') border-red-500 @enderror" placeholder="5512345678"
+                        value="{{ old('phone') }}" required>
+                    @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+            </div>
+
+            <div>
+                <label for="birth_date" class="{{ $styles['label'] }}">Fecha de Nacimiento</label>
+                <input type="date" name="birth_date" id="birth_date" class="{{ $styles['input'] }} @error('birth_date') border-red-500 @enderror"
+                    value="{{ old('birth_date') }}" required>
+                @error('birth_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div class="{{ $styles['grid_2_cols'] }}">
                 <div>
                     <label for="password" class="{{ $styles['label'] }}">Contraseña</label>
-                    <input type="password" name="password" id="password" class="{{ $styles['input'] }}"
+                    <input type="password" name="password" id="password" class="{{ $styles['input'] }} @error('password') border-red-500 @enderror"
                         placeholder="••••••••" required>
+                    @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="password_confirmation" class="{{ $styles['label'] }}">Confirmar Contraseña</label>

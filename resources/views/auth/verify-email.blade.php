@@ -26,13 +26,14 @@
                 recuperar el acceso a tu cuenta.</p>
         </div>
 
-        <form action="{{ route('verifyEmail') }}" method="POST" class="{{ $styles['form'] }}">
+        <form action="{{ route('password.email') }}" method="POST" class="{{ $styles['form'] }}">
             @csrf
 
             <div>
                 <label for="email" class="{{ $styles['label'] }}">Correo electrónico</label>
-                <input type="email" name="email" id="email" class="{{ $styles['input'] }}" placeholder="tu@correo.com"
-                    required>
+                <input type="email" name="email" id="email" class="{{ $styles['input'] }} @error('email') border-red-500 @enderror" placeholder="tu@correo.com"
+                    value="{{ old('email') }}" required>
+                @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <button type="submit" class="{{ $styles['submit_btn'] }}">

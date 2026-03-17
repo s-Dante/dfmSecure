@@ -22,13 +22,14 @@
             <p class="{{ $styles['subheading'] }}">Asegúrate de usar caracteres seguros para proteger tu cuenta.</p>
         </div>
 
-        <form action="{{ route('verifyEmail') }}" method="POST" class="{{ $styles['form'] }}">
+        <form action="{{ route('password.update') }}" method="POST" class="{{ $styles['form'] }}">
             @csrf
 
             <div>
                 <label for="password" class="{{ $styles['label'] }}">Nueva Contraseña</label>
-                <input type="password" name="password" id="password" class="{{ $styles['input'] }}"
+                <input type="password" name="password" id="password" class="{{ $styles['input'] }} @error('password') border-red-500 @enderror"
                     placeholder="••••••••" required>
+                @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div>

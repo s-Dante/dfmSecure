@@ -26,24 +26,30 @@
             <p class="{{ $styles['subheading'] }}">Ingresa tus credenciales para continuar.</p>
         </div>
 
-        <form action="{{ route('logIn') }}" method="POST" class="{{ $styles['form'] }}">
+        <form action="{{ route('logIn.post') }}" method="POST" class="{{ $styles['form'] }}">
             @csrf
 
             <div>
                 <label for="email" class="{{ $styles['label'] }}">Correo electrónico</label>
-                <input type="email" name="email" id="email" class="{{ $styles['input'] }}" placeholder="tu@correo.com"
-                    required>
+                <input type="email" name="email" id="email" class="{{ $styles['input'] }} @error('email') border-red-500 ring-red-500 @enderror" placeholder="tu@correo.com"
+                    value="{{ old('email') }}" required>
+                @error('email')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <div class="flex items-center justify-between mb-1">
                     <label for="password" class="{{ $styles['label'] }} !mb-0">Contraseña</label>
-                    <a href="{{ route('resetPassword') }}" class="{{ $styles['link'] }}">
+                    <a href="{{ route('verifyEmail') }}" class="{{ $styles['link'] }}">
                         ¿Olvidaste tu contraseña?
                     </a>
                 </div>
-                <input type="password" name="password" id="password" class="{{ $styles['input'] }}"
+                <input type="password" name="password" id="password" class="{{ $styles['input'] }} @error('password') border-red-500 ring-red-500 @enderror"
                     placeholder="••••••••" required>
+                @error('password')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <button type="submit" class="{{ $styles['submit_btn'] }}">

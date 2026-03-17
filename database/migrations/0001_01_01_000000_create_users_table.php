@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone', 20)->unique();
-            $table->date('birth_date');
+            $table->date('birth_date')->nullable();
             $table->string('gender')->default(GenderEnum::OTHER->value);
             // $table->tinyInteger('role_id')->constained('roles')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();

@@ -26,12 +26,14 @@
                 Revisa tu bandeja de entrada o spam.</p>
         </div>
 
-        <form action="{{ route('verifyEmail') }}" method="POST" class="{{ $styles['form'] }}">
+        <form action="{{ route('password.verifyToken') }}" method="POST" class="{{ $styles['form'] }}">
             @csrf
 
             <div>
+                <input type="hidden" name="email" value="{{ $email }}">
                 <label for="token" class="{{ $styles['label'] }}">Código de Seguridad (Token)</label>
-                <input type="text" name="token" id="token" class="{{ $styles['input'] }}" placeholder="XXXXXX" required>
+                <input type="text" name="token" id="token" class="{{ $styles['input'] }} @error('token') border-red-500 @enderror" placeholder="XXXXXX" required>
+                @error('token') <p class="text-red-500 text-sm mt-1 text-center font-bold">{{ $message }}</p> @enderror
             </div>
 
             <button type="submit" class="{{ $styles['submit_btn'] }}">

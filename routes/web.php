@@ -14,22 +14,25 @@ Route::get('/', function () {
 /**
  * Rutas de autentificacion 
  */
-Route::get("/login", function () {
-    return view('auth.login');
-})->name('logIn');
-Route::get("/signin", function () {
-    return view('auth.signin');
-})->name('signIn');
-Route::get("/verify-email", function () {
-    return view('auth.verify-email');
-})->name('verifyEmail');
-Route::get("/verify-token", function () {
-    return view('auth.verify-token');
-})->name('verifyToken');
-Route::get("/reset-password", function () {
-    return view('auth.reset-pswd');
-})->name('resetPassword');
+Route::middleware('guest')->group(function () {
+    Route::get("/login", [App\Http\Controllers\AuthController::class, 'showLogin'])->name('logIn');
+    Route::post("/login", [App\Http\Controllers\AuthController::class, 'login'])->name('logIn.post');
+    
+    Route::get("/signin", [App\Http\Controllers\AuthController::class, 'showRegister'])->name('signIn');
+    Route::post("/signin", [App\Http\Controllers\AuthController::class, 'register'])->name('signIn.post');
+    
+    // Recovery routes
+    Route::get("/verify-email", [App\Http\Controllers\PasswordResetController::class, 'showVerifyEmail'])->name('verifyEmail');
+    Route::post("/verify-email", [App\Http\Controllers\PasswordResetController::class, 'sendToken'])->name('password.email');
+    
+    Route::get("/verify-token", [App\Http\Controllers\PasswordResetController::class, 'showVerifyToken'])->name('verifyToken');
+    Route::post("/verify-token", [App\Http\Controllers\PasswordResetController::class, 'verifyToken'])->name('password.verifyToken');
+    
+    Route::get("/reset-password", [App\Http\Controllers\PasswordResetController::class, 'showResetPassword'])->name('resetPassword');
+    Route::post("/reset-password", [App\Http\Controllers\PasswordResetController::class, 'resetPassword'])->name('password.update');
+});
 
+Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 /**
  * Rutas a vistas generales
