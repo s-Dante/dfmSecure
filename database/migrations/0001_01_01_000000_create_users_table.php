@@ -33,7 +33,6 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        // Aseguramos que sea LONGBLOB o MEDIUMBLOB en MySQL
         DB::statement('ALTER TABLE users MODIFY profile_picture_blob LONGBLOB');
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

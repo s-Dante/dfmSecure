@@ -2,25 +2,39 @@
 
 namespace Database\Seeders;
 
+use App\Enums\PlanStatusEnum;
+use App\Models\Sinister;
 use Illuminate\Database\Seeder;
+
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\AddressSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\FiscalSeeder;
+use Database\Seeders\VehicleModelSeeder;
+use Database\Seeders\InsuredVehicleSeeder;
+use Database\Seeders\PlanSeeder;
+use Database\Seeders\PolicySeeder;
+use Database\Seeders\SinisterSeeder;
+use Database\Seeders\SinisterCommentSeeder;
+use Database\Seeders\SinisterMultimediaSeeder;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
-     *
-     * Execution order respects FK dependencies:
-     *  1. Roles          (referenced by users)
-     *  2. Addresses      (referenced by users)
-     *  3. Users          (references roles + addresses)
-     *  4. Fiscals        (references users)
-     *  5. VehicleModels  (referenced by insured_vehicles)
-     *  6. InsuredVehicles (references users + vehicle_models)
-     *  7. Plans          (referenced by policies)
-     *  8. Policies       (references insured_vehicles + users + plans)
-     *  9. Sinisters      (references policies + users)
-     * 10. SinisterComments  (references sinisters + users)
-     * 11. SinisterMultimedia (references sinisters)
+     * Orden de ejecucion
+     * 
+     * 1-. Roles
+     * 2-. Addresses
+     * 3-. Users
+     * 4-. Fiscals
+     * 5-. Vehicle Models
+     * 6-. Insured Vehicles
+     * 7-. Plans
+     * 8-. Policies
+     * 9-. Sinisters
+     * 10-. Sinister Comments
+     * 
+     * 11-. Sinister Multimedia
      */
     public function run(): void
     {
@@ -35,7 +49,7 @@ class DatabaseSeeder extends Seeder
             PolicySeeder::class,
             SinisterSeeder::class,
             SinisterCommentSeeder::class,
-            SinisterMultimediaSeeder::class,
+            //SinisterMultimediaSeeder::class,
         ]);
     }
 }

@@ -1,17 +1,13 @@
 <?php
 
 namespace Database\Seeders;
+use Illuminate\Database\Seeder;
 
 use App\Models\InsuredVehicle;
 use App\Models\Policy;
-use Illuminate\Database\Seeder;
 
 class PolicySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     * Creates 1 to 2 policies per insured vehicle.
-     */
     public function run(): void
     {
         InsuredVehicle::all()->each(function (InsuredVehicle $vehicle) {

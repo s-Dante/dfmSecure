@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Enums\PlanStatusEnum;
-use App\Models\Plan;
 use Illuminate\Database\Eloquent\Factories\Factory;
+
+use App\Models\Plan;
+use App\Enums\PlanStatusEnum;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Plan>
@@ -15,39 +16,43 @@ class PlanFactory extends Factory
 
     private const PLANS = [
         [
-            'name'  => 'Plan Básico',
-            'price' => 1299.00,
-            'info'  => [
-                'coverage'       => 'Responsabilidad Civil',
-                'medical_limit'  => 100000,
+            'name' => 'Básico',
+            'price' => '10000',
+            'info' => [
+                'coverage' => 'Responsabilidad civil',
+                'medical_limit' => 100000,
                 'material_limit' => 50000,
-                'deductible'     => 10,
-                'benefits'       => ['Asistencia Vial Básica', 'Robo Total'],
+                'deductible' => 10,
+                'benefits' => ['Asistencia vial', 'Robo total'],
             ],
         ],
         [
-            'name'  => 'Plan Amplio',
-            'price' => 3499.00,
-            'info'  => [
-                'coverage'       => 'Cobertura Amplia',
-                'medical_limit'  => 300000,
-                'material_limit' => 150000,
-                'deductible'     => 5,
-                'benefits'       => ['Asistencia Vial', 'Robo Total', 'Daños Materiales', 'Gastos Médicos'],
+            'name' => 'Amplio',
+            'price' => '20000',
+            'info' => [
+                'coverage' => 'Cobertura amplia',
+                'medical_limit' => 200000,
+                'material_limit' => 100000,
+                'deductible' => 5,
+                'benefits' => ['Asistencia vial', 'Robo total', 'Daños materiales', 'Gastos medicos'],
             ],
         ],
         [
-            'name'  => 'Plan Premium',
-            'price' => 6999.00,
-            'info'  => [
-                'coverage'       => 'Cobertura Total',
-                'medical_limit'  => 1000000,
-                'material_limit' => 500000,
-                'deductible'     => 0,
-                'benefits'       => [
-                    'Asistencia Vial 24/7', 'Robo Total', 'Robo Parcial',
-                    'Daños Materiales', 'Gastos Médicos Ampliados',
-                    'Auto Sustituto', 'Defensa Jurídica',
+            'name' => 'Total',
+            'price' => '30000',
+            'info' => [
+                'coverage' => 'Cobertura total',
+                'medical_limit' => 300000,
+                'material_limit' => 200000,
+                'deductible' => 0,
+                'benefits' => [
+                    'Asistencia vial',
+                    'Robo total',
+                    'Robo parcial',
+                    'Daños materiales',
+                    'Gastos medicos amplificados',
+                    'Auto sustituto',
+                    'Defensa juridica',
                 ],
             ],
         ],
@@ -63,50 +68,40 @@ class PlanFactory extends Factory
         $plan = fake()->randomElement(self::PLANS);
 
         return [
-            'name'   => $plan['name'] . ' ' . fake()->numberBetween(1, 99),
+            'name' => $plan['name'],
             'status' => PlanStatusEnum::ACTIVE->value,
-            'info'   => $plan['info'],
-            'price'  => $plan['price'],
+            'info' => $plan['info'],
+            'price' => $plan['price'],
         ];
     }
 
-    /**
-     * State for the Basic plan.
-     */
     public function basic(): static
     {
         $plan = self::PLANS[0];
         return $this->state(fn() => [
-            'name'  => $plan['name'],
+            'name' => $plan['name'],
             'price' => $plan['price'],
-            'info'  => $plan['info'],
+            'info' => $plan['info'],
         ]);
     }
 
-    /**
-     * State for the Amplio plan.
-     */
     public function amplio(): static
     {
         $plan = self::PLANS[1];
         return $this->state(fn() => [
-            'name'  => $plan['name'],
+            'name' => $plan['name'],
             'price' => $plan['price'],
-            'info'  => $plan['info'],
+            'info' => $plan['info'],
         ]);
     }
 
-    /**
-     * State for the Premium plan.
-     */
     public function premium(): static
     {
         $plan = self::PLANS[2];
         return $this->state(fn() => [
-            'name'  => $plan['name'],
+            'name' => $plan['name'],
             'price' => $plan['price'],
-            'info'  => $plan['info'],
+            'info' => $plan['info'],
         ]);
     }
 }
-

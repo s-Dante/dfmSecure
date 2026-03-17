@@ -2,32 +2,29 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RoleEnum;
-use App\Models\InsuredVehicle;
-use App\Models\Role;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+
+use App\Models\InsuredVehicle;
+use App\Models\User;
+use App\Models\Role;
+use App\Enums\RoleEnum;
 
 class InsuredVehicleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     * Creates 1 to 3 vehicles per insured user.
-     */
     public function run(): void
     {
-        $insuredRole = Role::where('name', RoleEnum::INSURED->value)->first();
+        $isuredRole = Role::where('name', RoleEnum::INSURED->value)->first();
 
-        if (!$insuredRole) {
+        if (!$isuredRole) {
+            $this->command->error('No existe el rol' . RoleEnum::INSURED->vale);
             return;
         }
 
-        User::where('role_id', $insuredRole->id)->each(function (User $user) {
-            $count = rand(1, 3);
+        User::where('role_id', $isuredRole->id)->each(function (User $user) {
+            $count = rand(1, 4);
             InsuredVehicle::factory()
                 ->count($count)
                 ->create(['user_id' => $user->id]);
         });
     }
 }
-

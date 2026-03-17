@@ -1,11 +1,11 @@
 <?php
 
 namespace Database\Factories;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 use App\Models\InsuredVehicle;
 use App\Models\User;
 use App\Models\VehicleModel;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\InsuredVehicle>
@@ -15,28 +15,6 @@ class InsuredVehicleFactory extends Factory
     protected $model = InsuredVehicle::class;
 
     /**
-     * Generate a random 17-character VIN.
-     * Uses uppercase letters and digits, excluding I, O, Q.
-     */
-    private function generateVin(): string
-    {
-        $chars = 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789';
-        $vin   = '';
-        for ($i = 0; $i < 17; $i++) {
-            $vin .= $chars[random_int(0, strlen($chars) - 1)];
-        }
-        return $vin;
-    }
-
-    /**
-     * Generate a Mexican license plate: 3 letters + dash + 3 digits (e.g. ABC-123).
-     */
-    private function generateMexicanPlate(): string
-    {
-        return strtoupper(fake()->lexify('???')) . '-' . fake()->numerify('###');
-    }
-
-    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
@@ -44,11 +22,26 @@ class InsuredVehicleFactory extends Factory
     public function definition(): array
     {
         return [
-            'vin'              => $this->generateVin(),
-            'plate'            => $this->generateMexicanPlate(),
+            'vin' => $this->generateVIN(),
+            'plate' => $this->generatePlate(),
             'vehicle_model_id' => VehicleModel::inRandomOrder()->first()?->id ?? VehicleModel::factory(),
-            'user_id'          => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
         ];
+    }
+
+    private function generateVIN(): string
+    {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $vin = '';
+        for ($i = 0; $i < 17; $i++) {
+            $vin .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+        return $vin;
+    }
+
+    private function generatePlate(): string
+    {
+        return strtoupper(fake()->lexify('???')) . '-' . fake()->numerify('##') . '-' . fake()->numerify('##');
     }
 }
 
