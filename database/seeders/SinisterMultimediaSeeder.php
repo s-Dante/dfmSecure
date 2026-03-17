@@ -1,8 +1,9 @@
 <?php
 
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Sinister;
 use App\Models\SinisterMultimedia;
 
@@ -10,24 +11,23 @@ class SinisterMultimediaSeeder extends Seeder
 {
     public function run(): void
     {
-        // Disable query log to prevent memory leaks with large binary blobs
-        \Illuminate\Support\Facades\DB::disableQueryLog();
+        DB::disableQueryLog();
 
-        // Obtener todos los siniestros para asignarles multimedia
         $sinisters = Sinister::all();
-        
-        // Si no hay, crear algunos para probar
+
         if ($sinisters->isEmpty()) {
-            $sinisters = Sinister::factory(10)->create();
+            $sinisters = Sinister::factory()->count(10)->create();
+            $this->command->line('No exisitian siniestros y se crearon', "info");
         }
-        
-        foreach($sinisters as $sinister) {
-            // Asignar entre 1 y 4 archivos multimedia a cada siniestro
-            $count = rand(1, 4); 
-            
-            SinisterMultimedia::factory($count)->create([
-                'sinister_id' => $sinister->id,
-            ]);
-        }
+
+        foreach ($sinisters as $sinister) {
+            $count = rand(1, 4);
+
+            SinisterMultimedia::factory()
+                ->count($count)
+                ->create([
+                    'sinister_id' => $sinister->id,
+                ]);
+        } 
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('status')->default(PlanStatusEnum::ACTIVE->value);
-            $table->json('info');
+            $table->json('info'); //que use utf8mb4_unicode_ci
             $table->decimal('price',10,2);
             $table->timestamps();
             $table->softDeletes();

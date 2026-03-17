@@ -22,41 +22,38 @@ class SinisterMultimediaFactory extends Factory
      */
     public function definition(): array
     {
-        $type = fake()->randomElement([
-            SinisterMultimediaTypeEnum::PHOTO->value, 
-            SinisterMultimediaTypeEnum::VIDEO->value
+        $type = fake()-> randomElement([
+            SinisterMultimediaTypeEnum::PHOTO->value,
+            SinisterMultimediaTypeEnum::VIDEO->value,
         ]);
 
         $typeDirectoryMap = [
             SinisterMultimediaTypeEnum::PHOTO->value => 'photos',
             SinisterMultimediaTypeEnum::VIDEO->value => 'videos',
-            // Preparado para futuros tipos:
-            // SinisterMultimediaTypeEnum::AUDIO->value => 'audios',
-            // SinisterMultimediaTypeEnum::DOCUMENT->value => 'documents',
+            SinisterMultimediaTypeEnum::AUDIO->value => 'audios',
+            SinisterMultimediaTypeEnum::DOCUMENT->value => 'documents',
         ];
 
-        $publicPath = 'database/sinister/multimedia';
-        $fullPath = public_path($publicPath);
-        
-        $subDir = $typeDirectoryMap[$type];
-        $directory = $fullPath . '/' . $subDir;
+        $path = 'database/sinister/multimedia';
+        $basePath = public_path($path);
 
-        // Asegurar que el directorio existe para evitar errores si no hay archivos aún
+        $subDir = $typeDirectoryMap[$type];
+        $directory = $basePath . '/' . $subDir;
+
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
 
         $files = File::files($directory);
-        
-        if (empty($files)) {
-            // Fallback en caso de que la carpeta esté vacía
+
+        if(empty($files)) {
             return [
                 'type' => $type,
                 'blob_file' => null,
-                'path_file' => $publicPath . '/' . $subDir . '/placeholder.jpg',
+                'path_file' => null,
                 'description' => fake()->sentence(),
-                'mime' => 'image/jpeg',
-                'size' => 1024,
+                'mime' => null,
+                'size' => 0,
                 'thumbnail' => null,
                 'sinister_id' => Sinister::factory(),
             ];
@@ -64,23 +61,21 @@ class SinisterMultimediaFactory extends Factory
 
         $file = fake()->randomElement($files);
         $fileName = $file->getFilename();
-        
+
         $mime = mime_content_type($file->getPathname()) ?: 'application/octet-stream';
         $size = filesize($file->getPathname()) ?: 0;
-        
-        // 50% de probabilidad de ser blob o url, a menos que el archivo sea enorme (>1MB) 
-        // para evitar el agotamiento de la memoria de PHP durante el DB Seeding
-        $isBlob = $size < 1000000 ? fake()->boolean() : false;
+
+        $isBlob = $size < 5000000 ? fake()->boolean() : false;
 
         return [
-            'type' => $type,
-            'blob_file' => $isBlob ? file_get_contents($file->getPathname()) : null,
-            'path_file' => $isBlob ? null : $publicPath . '/' . $subDir . '/' . $fileName,
-            'description' => fake()->sentence(),
-            'mime' => $mime,
-            'size' => $size,
-            'thumbnail' => null,
-            'sinister_id' => Sinister::factory(),
-        ];
+                'type' => $type,
+                'blob_file' => $isBlob ? file_get_contents($file->getPathname()) : null,
+                'path_file' => $isBlob ? null : $path . '/' . $subDir . '/' . $fileName,
+                'description' => fake()->sentence(),
+                'mime' => $mime,
+                'size' => $size,
+                'thumbnail' => null,
+                'sinister_id' => Sinister::factory(),
+            ];
     }
 }
