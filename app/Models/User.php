@@ -102,4 +102,32 @@ class User extends Authenticatable
         return $this->hasMany(Policy::class, 'insured_id');
     }
 
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role && $this->role->name === $role;
+    }
+
+    public function isInsured(): bool
+    {
+        return $this->hasRole(\App\Enums\RoleEnum::INSURED->value);
+    }
+
+    public function isAdjuster(): bool
+    {
+        return $this->hasRole(\App\Enums\RoleEnum::ADJUSTER->value);
+    }
+
+    public function isSupervisor(): bool
+    {
+        return $this->hasRole(\App\Enums\RoleEnum::SUPERVISOR->value);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(\App\Enums\RoleEnum::ADMIN->value);
+    }
+
 }

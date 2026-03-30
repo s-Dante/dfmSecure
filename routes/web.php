@@ -57,17 +57,15 @@ Route::get("/consultation", function () {
 /**
  * Rutas del asegurado
  */
-Route::get("/my-vehicle", function () {
-    return view('insured.my-vehicles');
-})->name('myVehicle');
+Route::middleware(['auth', 'role:insured'])->group(function () {
+    Route::get("/my-vehicle", [App\Http\Controllers\InsuredController::class, 'myVehicles'])->name('myVehicle');
+    
+    Route::get("/edit-vehicle", function () {
+        return view('insured.my-vehicles-edit');
+    })->name('editVehicle');
 
-Route::get("/edit-vehicle", function () {
-    return view('insured.my-vehicles-edit');
-})->name('editVehicle');
-
-Route::get("/my-policies", function () {
-    return view('insured.my-policies');
-})->name('myPolicies');
+    Route::get("/my-policies", [App\Http\Controllers\InsuredController::class, 'myPolicies'])->name('myPolicies');
+});
 
 
 /**

@@ -6,8 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 use App\Enums\PlanStatusEnum;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,7 +17,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('status')->default(PlanStatusEnum::ACTIVE->value);
             $table->json('info'); //que use utf8mb4_unicode_ci
-            $table->decimal('price',10,2);
+            $table->decimal('price', 10, 2);
             $table->timestamps();
             $table->softDeletes();
         });
