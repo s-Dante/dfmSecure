@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Uso de Objetos de Base de Datos
+    |--------------------------------------------------------------------------
+    |
+    | Cuando esta opción está en true, el sistema usará Stored Procedures,
+    | Views, Triggers y Functions directamente en lugar de Eloquent.
+    | Cambiar a false para usar Eloquent (modo predeterminado).
+    |
+    */
+    'use_db_objects' => env('USE_DB_OBJECTS', false),
+
 ];
