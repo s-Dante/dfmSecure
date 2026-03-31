@@ -10,11 +10,11 @@ use App\Models\User;
 use App\Mail\SendResetTokenMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\UsesDbObjects;
+use App\Traits\UsesDBObjects;
 
 class PasswordResetController extends Controller
 {
-    use UsesDbObjects;
+    use UsesDBObjects;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  VISTAS
@@ -56,7 +56,7 @@ class PasswordResetController extends Controller
 
         $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        if ($this->useDbObjects()) {
+        if ($this->useDBObjects()) {
             // El SP valida el email y hace el upsert en password_reset_tokens
             $this->execProcedure('sp_send_reset_token', [$request->email, $token]);
         } else {
@@ -86,7 +86,7 @@ class PasswordResetController extends Controller
             'token' => 'required|numeric|digits:6',
         ]);
 
-        if ($this->useDbObjects()) {
+        if ($this->useDBObjects()) {
             $results = $this->callProcedure('sp_verify_reset_token', [
                 $request->email,
                 $request->token,
@@ -119,7 +119,9 @@ class PasswordResetController extends Controller
     {
         $request->validate([
             'password' => [
-                'required', 'string', 'min:8',
+                'required',
+                'string',
+                'min:8',
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
                 'regex:/[0-9]/',
@@ -138,7 +140,7 @@ class PasswordResetController extends Controller
 
         $passwordHash = Hash::make($request->password);
 
-        if ($this->useDbObjects()) {
+        if ($this->useDBObjects()) {
             // SP actualiza la contraseña y elimina el token en una sola transacción
             $this->callProcedure('sp_change_password', [$email, $passwordHash]);
 

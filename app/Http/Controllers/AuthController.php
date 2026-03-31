@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
 use App\Enums\RoleEnum;
-use App\Traits\UsesDbObjects;
+use App\Traits\UsesDBObjects;
 
 class AuthController extends Controller
 {
-    use UsesDbObjects;
+    use UsesDBObjects;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  VISTAS
@@ -39,11 +39,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if ($this->useDbObjects()) {
+        if ($this->useDBObjects()) {
             return $this->loginWithSP($request, $credentials);
         }
 
@@ -103,15 +103,17 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name'            => 'required|string|max:80',
-            'username'        => 'required|string|max:30|unique:users',
+            'name' => 'required|string|max:80',
+            'username' => 'required|string|max:30|unique:users',
             'father_lastname' => 'required|string|max:50',
             'mother_lastname' => 'nullable|string|max:50',
-            'email'           => 'required|string|email|max:80|unique:users',
-            'phone'           => 'required|string|max:20|unique:users',
-            'birth_date'      => 'required|date|before_or_equal:-18 years',
-            'password'        => [
-                'required', 'string', 'min:8',
+            'email' => 'required|string|email|max:80|unique:users',
+            'phone' => 'required|string|max:20|unique:users',
+            'birth_date' => 'required|date|before_or_equal:-18 years',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
                 'regex:/[0-9]/',
@@ -121,7 +123,7 @@ class AuthController extends Controller
             ],
         ], [
             'birth_date.before_or_equal' => 'Debes ser mayor de 18 años para registrarte.',
-            'password.regex'             => 'La contraseña debe contener mayúsculas, minúsculas, números y SOLO los siguientes caracteres especiales: / - _ * & ( ).',
+            'password.regex' => 'La contraseña debe contener mayúsculas, minúsculas, números y SOLO los siguientes caracteres especiales: / - _ * & ( ).',
         ]);
 
         // Obtener el rol 'insured' (necesario en ambos modos)
@@ -130,7 +132,7 @@ class AuthController extends Controller
             return back()->with('error', 'Rol predeterminado no encontrado. Contacta al administrador.');
         }
 
-        if ($this->useDbObjects()) {
+        if ($this->useDBObjects()) {
             return $this->registerWithSP($request, $validated, $role->id);
         }
 
@@ -140,15 +142,15 @@ class AuthController extends Controller
     private function registerWithEloquent(Request $request, array $validated, int $roleId): \Illuminate\Http\RedirectResponse
     {
         $user = User::create([
-            'name'            => $validated['name'],
-            'username'        => $validated['username'],
+            'name' => $validated['name'],
+            'username' => $validated['username'],
             'father_lastname' => $validated['father_lastname'],
             'mother_lastname' => $validated['mother_lastname'] ?? null,
-            'email'           => $validated['email'],
-            'phone'           => $validated['phone'],
-            'birth_date'      => $validated['birth_date'],
-            'password'        => Hash::make($validated['password']),
-            'role_id'         => $roleId,
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'birth_date' => $validated['birth_date'],
+            'password' => Hash::make($validated['password']),
+            'role_id' => $roleId,
         ]);
 
         Auth::login($user);
