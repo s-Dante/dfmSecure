@@ -13,14 +13,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('policies', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('folio')->unique();
-            $table->string('status')->default(PolicyStatusEnum::PENDING->value);
-            $table->date('begin_validity');
-            $table->date('end_validity');
-            $table->foreignId('vehicle_id')->constrained('insured_vehicles')->cascadeOnDelete();
-            $table->foreignId('insured_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('plan_id')->constrained('plans')->cascadeOnDelete();
+            $table->id()->comment('Identificador principal de la tabla de polizas');
+            $table->uuid('folio')->unique()->comment('Folio de la poliza');
+            $table->string('status')->default(PolicyStatusEnum::PENDING->value)->comment('Estado de la poliza');
+            $table->date('begin_validity')->comment('Fecha de inicio de vigencia');
+            $table->date('end_validity')->comment('Fecha de fin de vigencia');
+            $table->foreignId('vehicle_id')->constrained('insured_vehicles')->cascadeOnDelete()->comment('Identificador del vehiculo');
+            $table->foreignId('insured_id')->constrained('users')->cascadeOnDelete()->comment('Identificador del asegurado');
+            $table->foreignId('plan_id')->constrained('plans')->cascadeOnDelete()->comment('Identificador del plan');
             $table->timestamps();
             $table->softDeletes();
             $table->index('vehicle_id');

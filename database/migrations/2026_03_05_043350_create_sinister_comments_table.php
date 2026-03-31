@@ -11,10 +11,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sinister_comments', function (Blueprint $table) {
-            $table->id();
-            $table->longText('comment');
-            $table->foreignId('sinister_id')->constrained('sinisters');
-            $table->foreignId('user_id')->constrained('users');
+            $table->id()->comment('Identificador principal de la tabla de comentarios de siniestros');
+            $table->longText('comment')->comment('Comentario del siniestro');
+            $table->foreignId('sinister_id')->constrained('sinisters')->comment('Identificador del siniestro');
+            $table->foreignId('user_id')->constrained('users')->comment('Identificador del usuario');
             $table->timestamps();
             $table->softDeletes();
         });
