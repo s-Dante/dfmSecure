@@ -21,6 +21,7 @@ class Policy extends Model
 
     protected $fillable = [
         'folio',
+        // policy_number lo genera el trigger
         'status',
         'begin_validity',
         'end_validity',
@@ -33,6 +34,7 @@ class Policy extends Model
     {
         return [
             'folio' => 'string',
+            'policy_number' => 'string',
             'status' => PolicyStatusEnum::class,
             'begin_validity' => 'date',
             'end_validity' => 'date',

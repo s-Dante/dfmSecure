@@ -13,82 +13,82 @@
 
     <!-- Styles / Scripts -->
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
 </head>
 
 @php
-    $plansData = json_decode(file_get_contents(database_path('data/plans.json')), true);
+$plansData = json_decode(file_get_contents(database_path('data/plans.json')), true);
 
-    $styles = [
-        'body' => 'bg-primary text-text-dark font-sans antialiased selection:bg-accent selection:text-white',
+$styles = [
+'body' => 'bg-primary text-text-dark font-sans antialiased selection:bg-accent selection:text-white',
 
-        // Header
-        'header' => 'w-full bg-white shadow-sm sticky top-0 z-50',
-        'header_container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
-        'header_flex' => 'flex justify-between items-center h-20',
-        'logo_img' => 'h-40 l-[10px] w-auto object-contain',
-        'nav' => 'hidden md:flex space-x-6 items-center',
-        'btn_ghost' => 'text-quaternary font-medium hover:text-accent transition-colors duration-200',
-        'btn_primary' => 'bg-accent hover:bg-[#7d9460] text-white font-medium py-2 px-6 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md',
+// Header
+'header' => 'w-full bg-white shadow-sm sticky top-0 z-50',
+'header_container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
+'header_flex' => 'flex justify-between items-center h-20',
+'logo_img' => 'h-40 l-[10px] w-auto object-contain',
+'nav' => 'hidden md:flex space-x-6 items-center',
+'btn_ghost' => 'text-quaternary font-medium hover:text-accent transition-colors duration-200',
+'btn_primary' => 'bg-accent hover:bg-[#7d9460] text-white font-medium py-2 px-6 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md',
 
-        // Hero
-        'hero_section' => 'relative bg-quaternary text-white overflow-hidden max-w-7xl mx-auto rounded-3xl mt-6 sm:mt-8 shadow-xl',
-        'hero_overlay' => 'absolute inset-0 bg-gradient-to-l from-quaternary/40 via-quaternary/20 to-transparent z-10',
-        'hero_img' => 'absolute inset-0 w-full h-full object-cover mix-blend-overlay',
-        'hero_content' => 'relative z-20 px-8 sm:px-12 lg:px-20 py-24 sm:py-32 lg:py-48 flex flex-col justify-center items-end text-right ml-auto w-full md:w-3/4 lg:w-2/3',
-        'hero_h1' => 'text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 sm:mb-6',
-        'hero_accent' => 'text-accent',
-        'hero_p' => 'mt-4 text-lg sm:text-xl md:text-2xl text-secondary mb-8 sm:mb-10 font-light',
-        'hero_buttons' => 'flex flex-col sm:flex-row gap-4 justify-end w-full sm:w-auto',
-        'btn_hero_primary' => 'bg-accent hover:bg-[#7d9460] text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:-translate-y-1 shadow-lg text-lg text-center',
-        'btn_hero_secondary' => 'bg-transparent border-2 border-white hover:bg-white hover:text-quaternary text-white font-bold py-3 px-8 rounded-full transition-all duration-300 text-lg text-center',
+// Hero
+'hero_section' => 'relative bg-quaternary text-white overflow-hidden max-w-7xl mx-auto rounded-3xl mt-6 sm:mt-8 shadow-xl',
+'hero_overlay' => 'absolute inset-0 bg-gradient-to-l from-quaternary/40 via-quaternary/20 to-transparent z-10',
+'hero_img' => 'absolute inset-0 w-full h-full object-cover mix-blend-overlay',
+'hero_content' => 'relative z-20 px-8 sm:px-12 lg:px-20 py-24 sm:py-32 lg:py-48 flex flex-col justify-center items-end text-right ml-auto w-full md:w-3/4 lg:w-2/3',
+'hero_h1' => 'text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 sm:mb-6',
+'hero_accent' => 'text-accent',
+'hero_p' => 'mt-4 text-lg sm:text-xl md:text-2xl text-secondary mb-8 sm:mb-10 font-light',
+'hero_buttons' => 'flex flex-col sm:flex-row gap-4 justify-end w-full sm:w-auto',
+'btn_hero_primary' => 'bg-accent hover:bg-[#7d9460] text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:-translate-y-1 shadow-lg text-lg text-center',
+'btn_hero_secondary' => 'bg-transparent border-2 border-white hover:bg-white hover:text-quaternary text-white font-bold py-3 px-8 rounded-full transition-all duration-300 text-lg text-center',
 
-        // General Sections
-        'section_bg' => 'py-20 sm:py-24 bg-primary',
-        'container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
-        'section_header' => 'text-center mb-16',
-        'section_subtitle' => 'text-sm font-bold text-accent uppercase tracking-wider mb-2',
-        'section_title' => 'text-3xl md:text-4xl font-extrabold text-quaternary',
-        'section_desc' => 'mt-4 max-w-2xl mx-auto text-lg text-tertiary',
+// General Sections
+'section_bg' => 'py-20 sm:py-24 bg-primary',
+'container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
+'section_header' => 'text-center mb-16',
+'section_subtitle' => 'text-sm font-bold text-accent uppercase tracking-wider mb-2',
+'section_title' => 'text-3xl md:text-4xl font-extrabold text-quaternary',
+'section_desc' => 'mt-4 max-w-2xl mx-auto text-lg text-tertiary',
 
-        // Services
-        'services_grid' => 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 xl:gap-10 mt-12',
-        'service_card' => 'bg-white rounded-2xl shadow-sm border border-extra p-6 sm:p-8 text-center hover:shadow-xl transition-shadow duration-300 mt-6 sm:mt-0',
-        'service_icon_wrap' => 'w-16 h-16 bg-gradient-to-br from-white to-gray-200 -mt-12 sm:-mt-14 mx-auto rounded-full flex items-center justify-center shadow-md mb-6 border border-extra',
-        'service_icon' => 'w-8 h-8 text-tertiary',
-        'service_h4' => 'text-lg sm:text-xl font-bold text-quaternary mb-3',
-        'service_p' => 'text-tertiary text-sm leading-relaxed',
+// Services
+'services_grid' => 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 xl:gap-10 mt-12',
+'service_card' => 'bg-white rounded-2xl shadow-sm border border-extra p-6 sm:p-8 text-center hover:shadow-xl transition-shadow duration-300 mt-6 sm:mt-0',
+'service_icon_wrap' => 'w-16 h-16 bg-gradient-to-br from-white to-gray-200 -mt-12 sm:-mt-14 mx-auto rounded-full flex items-center justify-center shadow-md mb-6 border border-extra',
+'service_icon' => 'w-8 h-8 text-tertiary',
+'service_h4' => 'text-lg sm:text-xl font-bold text-quaternary mb-3',
+'service_p' => 'text-tertiary text-sm leading-relaxed',
 
-        // Plans
-        'plans_bg' => 'py-20 sm:py-24 bg-white border-t border-extra',
-        'plans_grid' => 'grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto',
-        'plan_card' => 'bg-primary rounded-3xl p-8 flex flex-col shadow-sm border border-extra transition-transform hover:-translate-y-1 relative',
-        'plan_card_featured' => 'bg-gradient-to-br from-[#243350] to-quaternary text-white rounded-3xl p-8 flex flex-col shadow-lg border border-accent/30 transition-transform hover:-translate-y-1 relative transform md:-translate-y-4 md:hover:-translate-y-5',
-        'plan_badge' => 'absolute -top-4 left-1/2 transform -translate-x-1/2 bg-accent text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-md whitespace-nowrap',
-        'plan_h3' => 'text-2xl font-bold text-quaternary mb-2 text-center',
-        'plan_h3_featured' => 'text-2xl font-bold text-white mb-2 text-center',
-        'plan_deductible_box' => 'text-center my-6 py-4 border-y border-extra/50',
-        'plan_deductible_box_featured' => 'text-center my-6 py-4 border-y border-white/10',
-        'plan_deductible_label' => 'text-xs font-semibold uppercase tracking-wider text-tertiary mb-1',
-        'plan_deductible_label_featured' => 'text-xs font-semibold uppercase tracking-wider text-secondary mb-1',
-        'plan_deductible' => 'text-4xl font-extrabold font-sans text-quaternary',
-        'plan_deductible_featured' => 'text-4xl font-extrabold font-sans text-white',
-        'plan_desc' => 'text-tertiary text-sm text-center mb-8',
-        'plan_desc_featured' => 'text-secondary text-sm text-center mb-8',
-        'plan_list' => 'space-y-4 mb-8 flex-grow',
-        'plan_li' => 'flex items-start text-quaternary text-sm',
-        'plan_li_featured' => 'flex items-start text-white text-sm',
-        'plan_icon_list' => 'w-5 h-5 text-accent mr-3 flex-shrink-0 mt-0.5',
-        'plan_btn' => 'w-full bg-white border border-extra text-quaternary font-bold py-3 px-6 rounded-full hover:bg-gray-50 transition-colors mt-auto text-center',
-        'plan_btn_featured' => 'w-full bg-accent hover:bg-[#7d9460] text-white font-bold py-3 px-6 rounded-full transition-colors shadow-md mt-auto text-center',
+// Plans
+'plans_bg' => 'py-20 sm:py-24 bg-white border-t border-extra',
+'plans_grid' => 'grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto',
+'plan_card' => 'bg-primary rounded-3xl p-8 flex flex-col shadow-sm border border-extra transition-transform hover:-translate-y-1 relative',
+'plan_card_featured' => 'bg-gradient-to-br from-[#243350] to-quaternary text-white rounded-3xl p-8 flex flex-col shadow-lg border border-accent/30 transition-transform hover:-translate-y-1 relative transform md:-translate-y-4 md:hover:-translate-y-5',
+'plan_badge' => 'absolute -top-4 left-1/2 transform -translate-x-1/2 bg-accent text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-md whitespace-nowrap',
+'plan_h3' => 'text-2xl font-bold text-quaternary mb-2 text-center',
+'plan_h3_featured' => 'text-2xl font-bold text-white mb-2 text-center',
+'plan_deductible_box' => 'text-center my-6 py-4 border-y border-extra/50',
+'plan_deductible_box_featured' => 'text-center my-6 py-4 border-y border-white/10',
+'plan_deductible_label' => 'text-xs font-semibold uppercase tracking-wider text-tertiary mb-1',
+'plan_deductible_label_featured' => 'text-xs font-semibold uppercase tracking-wider text-secondary mb-1',
+'plan_deductible' => 'text-4xl font-extrabold font-sans text-quaternary',
+'plan_deductible_featured' => 'text-4xl font-extrabold font-sans text-white',
+'plan_desc' => 'text-tertiary text-sm text-center mb-8',
+'plan_desc_featured' => 'text-secondary text-sm text-center mb-8',
+'plan_list' => 'space-y-4 mb-8 flex-grow',
+'plan_li' => 'flex items-start text-quaternary text-sm',
+'plan_li_featured' => 'flex items-start text-white text-sm',
+'plan_icon_list' => 'w-5 h-5 text-accent mr-3 flex-shrink-0 mt-0.5',
+'plan_btn' => 'w-full bg-white border border-extra text-quaternary font-bold py-3 px-6 rounded-full hover:bg-gray-50 transition-colors mt-auto text-center',
+'plan_btn_featured' => 'w-full bg-accent hover:bg-[#7d9460] text-white font-bold py-3 px-6 rounded-full transition-colors shadow-md mt-auto text-center',
 
-        // Footer
-        'footer' => 'bg-quaternary py-12 border-t border-tertiary/30',
-        'footer_container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center',
-        'footer_logo' => 'h-10 w-auto opacity-70 mb-6 grayscale hover:grayscale-0 transition-all duration-300',
-        'footer_text' => 'text-tertiary text-sm text-center',
-    ];
+// Footer
+'footer' => 'bg-quaternary py-12 border-t border-tertiary/30',
+'footer_container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center',
+'footer_logo' => 'h-10 w-auto opacity-70 mb-6 grayscale hover:grayscale-0 transition-all duration-300',
+'footer_text' => 'text-tertiary text-sm text-center',
+];
 @endphp
 
 <body class="{{ $styles['body'] }}">
@@ -226,51 +226,51 @@
 
                 <div class="{{ $styles['plans_grid'] }}">
                     @foreach ($plansData as $plan)
-                        @php
-                            // Determine if this is the featured plan ('Plus' or according to design needs)
-                            $isFeatured = $plan['name'] === 'Plus';
-                            
-                            $cardClass = $isFeatured ? $styles['plan_card_featured'] : $styles['plan_card'];
-                            $h3Class = $isFeatured ? $styles['plan_h3_featured'] : $styles['plan_h3'];
-                            $descClass = $isFeatured ? $styles['plan_desc_featured'] : $styles['plan_desc'];
-                            $deductibleBoxClass = $isFeatured ? $styles['plan_deductible_box_featured'] : $styles['plan_deductible_box'];
-                            $deductibleLabelClass = $isFeatured ? $styles['plan_deductible_label_featured'] : $styles['plan_deductible_label'];
-                            $deductibleClass = $isFeatured ? $styles['plan_deductible_featured'] : $styles['plan_deductible'];
-                            $liClass = $isFeatured ? $styles['plan_li_featured'] : $styles['plan_li'];
-                            $btnClass = $isFeatured ? $styles['plan_btn_featured'] : $styles['plan_btn'];
-                            
-                            $descriptions = [
-                                'Básico' => 'La protección legal e indispensable para circular.',
-                                'Plus' => 'Protección equilibrada y recomendada para tu patrimonio.',
-                                'Amplio' => 'La cobertura total para máxima tranquilidad.'
-                            ];
-                            $desc = $descriptions[$plan['name']] ?? 'La mejor cobertura para ti.';
-                        @endphp
-                        
-                        <div class="{{ $cardClass }}">
-                            @if($isFeatured)
-                                <div class="{{ $styles['plan_badge'] }}">Más Popular</div>
-                            @endif
-                            <h3 class="{{ $h3Class }}">{{ $plan['name'] }}</h3>
-                            <p class="{{ $descClass }}">{{ $desc }}</p>
+                    @php
+                    // Determine if this is the featured plan ('Plus' or according to design needs)
+                    $isFeatured = $plan['name'] === 'Plus';
 
-                            <div class="{{ $deductibleBoxClass }}">
-                                <div class="{{ $deductibleLabelClass }}">Deducible Daños</div>
-                                <div class="{{ $deductibleClass }}">{{ $plan['deducible_danos'] }}</div>
-                            </div>
+                    $cardClass = $isFeatured ? $styles['plan_card_featured'] : $styles['plan_card'];
+                    $h3Class = $isFeatured ? $styles['plan_h3_featured'] : $styles['plan_h3'];
+                    $descClass = $isFeatured ? $styles['plan_desc_featured'] : $styles['plan_desc'];
+                    $deductibleBoxClass = $isFeatured ? $styles['plan_deductible_box_featured'] : $styles['plan_deductible_box'];
+                    $deductibleLabelClass = $isFeatured ? $styles['plan_deductible_label_featured'] : $styles['plan_deductible_label'];
+                    $deductibleClass = $isFeatured ? $styles['plan_deductible_featured'] : $styles['plan_deductible'];
+                    $liClass = $isFeatured ? $styles['plan_li_featured'] : $styles['plan_li'];
+                    $btnClass = $isFeatured ? $styles['plan_btn_featured'] : $styles['plan_btn'];
 
-                            <ul class="{{ $styles['plan_list'] }}">
-                                @foreach($plan['beneficios'] as $benefit)
-                                    <li class="{{ $liClass }}">
-                                        <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        <span>{{ $benefit }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            <a href="{{ route('signIn') }}" class="{{ $btnClass }}">Seleccionar {{ $plan['name'] }}</a>
+                    $descriptions = [
+                    'Básico' => 'La protección legal e indispensable para circular.',
+                    'Plus' => 'Protección equilibrada y recomendada para tu patrimonio.',
+                    'Amplio' => 'La cobertura total para máxima tranquilidad.'
+                    ];
+                    $desc = $descriptions[$plan['name']] ?? 'La mejor cobertura para ti.';
+                    @endphp
+
+                    <div class="{{ $cardClass }}">
+                        @if($isFeatured)
+                        <div class="{{ $styles['plan_badge'] }}">Más Popular</div>
+                        @endif
+                        <h3 class="{{ $h3Class }}">{{ $plan['name'] }}</h3>
+                        <p class="{{ $descClass }}">{{ $desc }}</p>
+
+                        <div class="{{ $deductibleBoxClass }}">
+                            <div class="{{ $deductibleLabelClass }}">Deducible Daños</div>
+                            <div class="{{ $deductibleClass }}">{{ $plan['deducible_danos'] }}</div>
                         </div>
+
+                        <ul class="{{ $styles['plan_list'] }}">
+                            @foreach($plan['beneficios'] as $benefit)
+                            <li class="{{ $liClass }}">
+                                <svg class="{{ $styles['plan_icon_list'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>{{ $benefit }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('signIn') }}" class="{{ $btnClass }}">Seleccionar {{ $plan['name'] }}</a>
+                    </div>
                     @endforeach
                 </div>
             </div>

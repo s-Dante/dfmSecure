@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::create('policies', function (Blueprint $table) {
             $table->id()->comment('Identificador principal de la tabla de polizas');
             $table->uuid('folio')->unique()->comment('Folio de la poliza');
+            $table->string('policy_number')->nullable()->unique()->comment('Numero de poliza generado por trigger (POL-000001)');
             $table->string('status')->default(PolicyStatusEnum::PENDING->value)->comment('Estado de la poliza');
             $table->date('begin_validity')->comment('Fecha de inicio de vigencia');
             $table->date('end_validity')->comment('Fecha de fin de vigencia');

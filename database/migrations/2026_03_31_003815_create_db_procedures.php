@@ -50,7 +50,7 @@ return new class extends Migration {
                     'cache', 'cache_locks', 'jobs', 'job_batches', 'failed_jobs'
                   )
                 ORDER BY C.TABLE_NAME ASC, C.ORDINAL_POSITION ASC;
-            END;
+            END
         SQL;
         DB::unprepared($spGenerateDataDictionary);
 
@@ -88,7 +88,7 @@ return new class extends Migration {
                     u.updated_at,
                     u.deleted_at
                 FROM users u
-                WHERE u.emial = p_email
+                WHERE u.email = p_email
                     AND u.deleted_at IS NULL
                 LIMIT 1;
             END
@@ -101,25 +101,28 @@ return new class extends Migration {
         $spRegisterUser = <<<'SQL'
             DROP PROCEDURE IF EXISTS sp_register_user;
             CREATE PROCEDURE sp_register_user(
-                IN p_name   VARCHAR(255),
-                IN p_father_lasntame VARCHAR(255),
+                IN p_name            VARCHAR(255),
+                IN p_father_lastname VARCHAR(255),
                 IN p_mother_lastname VARCHAR(255),
-                IN p_username VARCHAR(30),
-                IN p_email VARCHAR(255),
-                IN p_phone VARCHAR(20),
-                IN p_birth_date DATE,
+                IN p_username        VARCHAR(30),
+                IN p_email           VARCHAR(255),
+                IN p_phone           VARCHAR(20),
+                IN p_birth_date      DATE,
                 IN p_password_hashed VARCHAR(255),
-                IN p_gender VARCHAR(255)
+                IN p_gender          VARCHAR(255),
+                IN p_role_id         BIGINT UNSIGNED
             )
             BEGIN
                 INSERT INTO users (
-                    name, father_lasntame, mother_lastname, 
-                    username, email, phone, birth_date, 
-                    password, gender, created_at, updated_at
+                    name, father_lastname, mother_lastname,
+                    username, email, phone, birth_date,
+                    password, gender, role_id,
+                    created_at, updated_at
                 ) VALUES (
-                    p_name, p_father_lasntame, p_mother_lastname,
+                    p_name, p_father_lastname, p_mother_lastname,
                     p_username, p_email, p_phone, p_birth_date,
-                    p_password_hashed, p_gender, NOW(), NOW()
+                    p_password_hashed, p_gender, p_role_id,
+                    NOW(), NOW()
                 );
 
                 SELECT LAST_INSERT_ID() AS id, p_email AS email;
@@ -143,13 +146,13 @@ return new class extends Migration {
                 FROM users
                 WHERE email = p_email
                     AND deleted_at IS NULL;
-                
+
                 IF v_user_exists = 0 THEN
                     SIGNAL SQLSTATE '45000'
                         SET MESSAGE_TEXT = 'El correo no esta registrado en el sistema';
                 END IF;
 
-                INSERT INTO password_reet_tokens (email, token, created_at)
+                INSERT INTO password_reset_tokens (email, token, created_at)
                 VALUES (p_email, p_token, NOW())
                 ON DUPLICATE KEY UPDATE
                     token = p_token,
@@ -183,16 +186,16 @@ return new class extends Migration {
         $spChangePassword = <<<'SQL'
             DROP PROCEDURE IF EXISTS sp_change_password;
             CREATE PROCEDURE sp_change_password(
-                IN p_email VARCHAR(255),
+                IN p_email         VARCHAR(255),
                 IN p_password_hash VARCHAR(255)
             )
             BEGIN
                 UPDATE users
-                SET password = p_password_hash,
+                SET password   = p_password_hash,
                     updated_at = NOW()
-                WHERE email = p_email
+                WHERE email      = p_email
                     AND deleted_at IS NULL;
-                
+
                 DELETE FROM password_reset_tokens
                 WHERE email = p_email;
 
@@ -207,34 +210,17 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        $dropSPGenerateDataDictionary = <<<'SQL'
-            DROP PROCEDURE IF EXISTS sp_generate_data_dictionary;
-        SQL;
-        DB::unprepared($dropSPGenerateDataDictionary);
+        $procedures = [
+            'sp_generate_data_dictionary',
+            'sp_find_user_by_email',
+            'sp_register_user',
+            'sp_send_reset_token',
+            'sp_verify_reset_token',
+            'sp_change_password'
+        ];
 
-        $dropSPFindUserByEmail = <<<'SQL'
-            DROP PROCEDURE IF EXISTS sp_find_user_by_email;
-        SQL;
-        DB::unprepared($dropSPFindUserByEmail);
-
-        $dropSPRegisterUser = <<<'SQL'
-            DROP PROCEDURE IF EXISTS sp_register_user;
-        SQL;
-        DB::unprepared($dropSPRegisterUser);
-
-        $dropSPSendResetToken = <<<'SQL'
-            DROP PROCEDURE IF EXISTS sp_send_reset_token;
-        SQL;
-        DB::unprepared($dropSPSendResetToken);
-
-        $dropSPVerifyResetToken = <<<'SQL'
-            DROP PROCEDURE IF EXISTS sp_verify_reset_token;
-        SQL;
-        DB::unprepared($dropSPVerifyResetToken);
-
-        $dropSPChangePassword = <<<'SQL'
-            DROP PROCEDURE IF EXISTS sp_change_password;
-        SQL;
-        DB::unprepared($dropSPChangePassword);
+        foreach ($procedures as $procedure) {
+            DB::unprepared("DROP PROCEDURE IF EXISTS {$procedure}");
+        }
     }
 };

@@ -22,6 +22,8 @@ class Sinister extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'folio',
+        // sinister_number lo genera el trigger
         'occur_date',
         'report_date',
         'close_date',
@@ -36,15 +38,16 @@ class Sinister extends Model
     protected function casts(): array
     {
         return [
-            'occur_date' => 'date',
-            'report_date' => 'date',
-            'close_date' => 'date',
-            'description' => 'string',
-            'location' => 'string',
-            'status' => SinisterStatusEnum::class,
-            'adjuster_id' => 'integer',
+            'folio'        => 'string',
+            'occur_date'   => 'date',
+            'report_date'  => 'date',
+            'close_date'   => 'date',
+            'description'  => 'string',
+            'location'     => 'string',
+            'status'       => SinisterStatusEnum::class,
+            'adjuster_id'  => 'integer',
             'supervisor_id' => 'integer',
-            'policy_id' => 'integer'
+            'policy_id'    => 'integer'
         ];
     }
 

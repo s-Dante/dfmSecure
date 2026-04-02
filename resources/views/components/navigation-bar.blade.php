@@ -1,34 +1,34 @@
 @php
-    $styles = [
-        'sidebar' => 'w-72 shrink-0 h-[calc(100vh-2rem)] m-4 rounded-3xl bg-quaternary flex flex-col text-white shadow-2xl z-20 overflow-hidden',
+$styles = [
+'sidebar' => 'w-72 shrink-0 h-[calc(100vh-2rem)] m-4 rounded-3xl bg-quaternary flex flex-col text-white shadow-2xl z-20 overflow-hidden',
 
-        'logo_container' => 'p-6 pb-2 border-b border-white/10 shrink-0 bg-quaternary z-10',
-        'logo_bg' => 'bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center',
-        'logo_img' => 'h-14 w-auto object-contain scale-110',
+'logo_container' => 'p-6 pb-2 border-b border-white/10 shrink-0 bg-quaternary z-10',
+'logo_bg' => 'bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center',
+'logo_img' => 'h-14 w-auto object-contain scale-110',
 
-        'nav_container' => 'flex-1 py-6 px-4 flex flex-col gap-8 overflow-y-auto',
+'nav_container' => 'flex-1 py-6 px-4 flex flex-col gap-8 overflow-y-auto',
 
-        'group' => 'flex flex-col gap-2',
-        'group_title' => 'text-xs font-bold text-accent uppercase tracking-widest px-4 mb-2 opacity-80',
+'group' => 'flex flex-col gap-2',
+'group_title' => 'text-xs font-bold text-accent uppercase tracking-widest px-4 mb-2 opacity-80',
 
-        'link' => 'flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:text-white hover:bg-accent/20 transition-all duration-300 relative group',
-        'link_active' => 'flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-accent/40 font-semibold relative',
+'link' => 'flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:text-white hover:bg-accent/20 transition-all duration-300 relative group',
+'link_active' => 'flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-accent/40 font-semibold relative',
 
-        'active_indicator' => '',
+'active_indicator' => '',
 
-        'icon' => 'w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity',
+'icon' => 'w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity',
 
-        'footer' => 'p-6 shrink-0 border-t border-white/10 bg-quaternary',
-        'logout_btn' => 'flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-300 hover:text-white hover:bg-red-500/20 transition-all duration-300',
-    ];
+'footer' => 'p-6 shrink-0 border-t border-white/10 bg-quaternary',
+'logout_btn' => 'flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-300 hover:text-white hover:bg-red-500/20 transition-all duration-300',
+];
 
-    // Helper to determine if a route is active. 
-    // In a real scenario, you'd use request()->routeIs('route_name')
-    $currentRoute = request()->route()->getName() ?? '';
+// Helper to determine if a route is active.
+// In a real scenario, you'd use request()->routeIs('route_name')
+$currentRoute = request()->route()->getName() ?? '';
 
-    $linkClass = function ($route) use ($styles, $currentRoute) {
-        return $currentRoute === $route ? $styles['link_active'] : $styles['link'];
-    };
+$linkClass = function ($route) use ($styles, $currentRoute) {
+return $currentRoute === $route ? $styles['link_active'] : $styles['link'];
+};
 @endphp
 
 <aside class="{{ $styles['sidebar'] }}">
@@ -48,7 +48,8 @@
 
             <a href="{{ route('dashboard') }}" class="{{ $linkClass('dashboard') }}">
                 @if($currentRoute === 'dashboard')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -60,7 +61,8 @@
 
             <a href="{{ route('profile') }}" class="{{ $linkClass('profile') }}">
                 @if($currentRoute === 'profile')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -71,7 +73,8 @@
 
             <a href="{{ route('consultation') }}" class="{{ $linkClass('consultation') }}">
                 @if($currentRoute === 'consultation')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -82,7 +85,8 @@
 
             <a href="{{ route('sinisterDetail') }}" class="{{ $linkClass('sinisterDetail') }}">
                 @if($currentRoute === 'sinisterDetail')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -94,12 +98,14 @@
         </div>
 
         <!-- Grupo: Asegurado -->
+        @if (auth()->user()->isInsured())
         <div class="{{ $styles['group'] }}">
             <h3 class="{{ $styles['group_title'] }}">Asegurado</h3>
 
             <a href="{{ route('myVehicle') }}" class="{{ $linkClass('myVehicle') }}">
                 @if($currentRoute === 'myVehicle')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -110,7 +116,8 @@
 
             <a href="{{ route('editVehicle') }}" class="{{ $linkClass('editVehicle') }}">
                 @if($currentRoute === 'editVehicle')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -122,7 +129,8 @@
 
             <a href="{{ route('myPolicies') }}" class="{{ $linkClass('myPolicies') }}">
                 @if($currentRoute === 'myPolicies')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,14 +139,17 @@
                 <span>Mis Pólizas</span>
             </a>
         </div>
+        @endif
 
         <!-- Grupo: Ajustador -->
+        @if (auth()->user()->isAdjuster())
         <div class="{{ $styles['group'] }}">
             <h3 class="{{ $styles['group_title'] }}">Ajustador</h3>
 
             <a href="{{ route('sinisterRegister') }}" class="{{ $linkClass('sinisterRegister') }}">
                 @if($currentRoute === 'sinisterRegister')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -150,7 +161,8 @@
 
             <a href="{{ route('sinisterEdit') }}" class="{{ $linkClass('sinisterEdit') }}">
                 @if($currentRoute === 'sinisterEdit')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -160,14 +172,17 @@
                 <span>Editar Siniestro</span>
             </a>
         </div>
+        @endif
 
         <!-- Grupo: Supervisor -->
+        @if (auth()->user()->isSupervisor())
         <div class="{{ $styles['group'] }}">
             <h3 class="{{ $styles['group_title'] }}">Supervisor</h3>
 
             <a href="{{ route('search') }}" class="{{ $linkClass('search') }}">
                 @if($currentRoute === 'search')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -178,7 +193,8 @@
 
             <a href="{{ route('sinisterManage') }}" class="{{ $linkClass('sinisterManage') }}">
                 @if($currentRoute === 'sinisterManage')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -188,14 +204,17 @@
                 <span>Dictaminar Siniestro</span>
             </a>
         </div>
+        @endif
 
         <!-- Grupo: Administrador -->
+        @if (auth()->user()->isAdmin())
         <div class="{{ $styles['group'] }}">
             <h3 class="{{ $styles['group_title'] }}">Administrador</h3>
 
             <a href="{{ route('manage') }}" class="{{ $linkClass('manage') }}">
                 @if($currentRoute === 'manage')
-                <div class="{{ $styles['active_indicator'] }}"></div> @endif
+                <div class="{{ $styles['active_indicator'] }}"></div>
+                @endif
                 <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -205,6 +224,7 @@
                 <span>Gestionar Usuarios</span>
             </a>
         </div>
+        @endif
 
     </nav>
 

@@ -14,6 +14,8 @@ return new class extends Migration {
     {
         Schema::create('sinisters', function (Blueprint $table) {
             $table->id()->comment('Identificador principal de la tabla de siniestros');
+            $table->uuid('folio')->unique()->comment('Folio del siniestro');
+            $table->string('sinister_number')->nullable()->unique()->comment('Numero de siniestro generado por trigger (SIN-000001)');
             $table->date('occur_date')->comment('Fecha en la que ocurrio el siniestro');
             $table->date('report_date')->comment('Fecha en la que se reporto el siniestro');
             $table->date('close_date')->nullable()->comment('Fecha en la que se cerro el siniestro');

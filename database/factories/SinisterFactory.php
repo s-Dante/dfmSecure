@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\RoleEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 use App\Models\Sinister;
 use App\Models\Policy;
@@ -27,7 +28,7 @@ class SinisterFactory extends Factory
         $reportDate = fake()->dateTimeBetween($occurDate, 'now');
 
         $policy = Policy::inRandomOrder()->first() ?? Policy::factory()->create();
-        
+
         $hasPreviousSinister = Sinister::where('policy_id', $policy->id)->exists();
         $isOld = $reportDate < now()->subMonths(2);
 
@@ -46,17 +47,18 @@ class SinisterFactory extends Factory
         $supervisor = User::where('role_id', $supervisorRole?->id)->inRandomOrder()->first() ?? User::factory()->create();
 
         return [
-            'occur_date' => $occurDate->format('Y-m-d'),
-            'report_date' => $reportDate->format('Y-m-d'),
-            'close_date' => $isClosed
+            'folio'        => (string) Str::uuid(),
+            'occur_date'   => $occurDate->format('Y-m-d'),
+            'report_date'  => $reportDate->format('Y-m-d'),
+            'close_date'   => $isClosed
                 ? fake()->dateTimeBetween($reportDate, 'now')->format('Y-m-d')
                 : null,
-            'description' => fake()->text(100),
-            'location' => fake()->address(),
-            'status' => $status,
-            'adjuster_id' => $adjuster->id,
+            'description'  => fake()->text(100),
+            'location'     => fake()->address(),
+            'status'       => $status,
+            'adjuster_id'  => $adjuster->id,
             'supervisor_id' => $supervisor->id,
-            'policy_id' => $policy->id,
+            'policy_id'    => $policy->id,
         ];
     }
 

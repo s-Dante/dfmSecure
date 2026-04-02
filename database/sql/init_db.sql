@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS roles (
     name        VARCHAR(255)    NOT NULL                                COMMENT 'Nombre del rol',
     created_at  TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se creo el registro',
     updated_at  TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se actualizo el registro',
-    deleted_at  TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro',
+    deleted_at  TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --  ---> Direcciones
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS users (
     deleted_at              TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro',
 
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE RESTRICT,
-    FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE RESTRICT,
+    FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --  ---> Fiscals
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS plans (
     price           DECIMAL(10,2)   NOT NULL                                COMMENT 'Precio del plan',
     created_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se creo el registro',
     updated_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se actualizo el registro',
-    deleted_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro',
+    deleted_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --  ---> Polizas
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS policies (
 
     FOREIGN KEY (vehicle_id) REFERENCES insured_vehicles(id) ON DELETE CASCADE,
     FOREIGN KEY (insured_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE,
+    FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX policies_vehicle_id_index ON policies (vehicle_id);
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS sinisters (
     
     FOREIGN KEY (adjuster_id) REFERENCES users(id) ON DELETE RESTRICT,
     FOREIGN KEY (supervisor_id) REFERENCES users(id) ON DELETE SET NULL,
-    FOREIGN KEY (policy_id) REFERENCES policies(id) ON DELETE CASCADE,
+    FOREIGN KEY (policy_id) REFERENCES policies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX sinisters_adjuster_id_index ON sinisters (adjuster_id);
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS sinister_multimedia (
     updated_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se actualizo el registro',
     deleted_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro',
 
-    FOREIGN KEY (sinister_id) REFERENCES sinisters(id) ON DELETE CASCADE,
+    FOREIGN KEY (sinister_id) REFERENCES sinisters(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --  ---> Comentarios de Siniestros
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS sinister_comments (
     deleted_at      TIMESTAMP       NULL                                    COMMENT 'Fecha en la que se elimino el registro',
 
     FOREIGN KEY (sinsiter_id) REFERENCES sinisters(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS sinister_comments (
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
     email           VARCHAR(80)     PRIMARY KEY,
     token           VARCHAR(255)    NOT NULL,
-    created_at      TIMESTAMP       NULL,
+    created_at      TIMESTAMP       NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -228,7 +228,7 @@ CREATE INDEX sessions_last_activity_index ON sessions (last_activity);
 CREATE TABLE IF NOT EXISTS cache (
     `key`           VARCHAR(255)    PRIMARY KEY,
     `value`         MEDIUMTEXT      NOT NULL,
-    `expiration`    INT             NOT NULL,
+    `expiration`    INT             NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX cache_expiration_index ON cache (expiration);
@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS job_batches (
     options             MEDIUMTEXT      NULL,
     cancelled_at        INT             NULL,
     created_at          INT             NOT NULL,
-    finished_at         INT             NULL,
+    finished_at         INT             NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS failed_jobs (

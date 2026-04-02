@@ -126,7 +126,6 @@ class AuthController extends Controller
             'password.regex' => 'La contraseña debe contener mayúsculas, minúsculas, números y SOLO los siguientes caracteres especiales: / - _ * & ( ).',
         ]);
 
-        // Obtener el rol 'insured' (necesario en ambos modos)
         $role = Role::where('name', RoleEnum::INSURED->value)->first();
         if (!$role) {
             return back()->with('error', 'Rol predeterminado no encontrado. Contacta al administrador.');
