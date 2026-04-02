@@ -31,13 +31,14 @@ class SinisterMultimedia extends Model
     public function casts(): array
     {
         return [
-            'type' => SinisterMultimediaTypeEnum::class,
-            'blob_file' => 'string',
-            'path_file' => 'string',
+            'type'        => SinisterMultimediaTypeEnum::class,
+            // blob_file NO debe tener cast a string: PDO lo puede devolver como stream (resource)
+            // y se debe leer con stream_get_contents() en MediaController
+            'path_file'   => 'string',
             'description' => 'string',
-            'mime' => 'string',
-            'size' => 'integer',
-            'thumbnail' => 'string',
+            'mime'        => 'string',
+            'size'        => 'integer',
+            'thumbnail'   => 'string',
             'sinister_id' => 'integer'
         ];
     }

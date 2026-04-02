@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Models\Gender;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SinisterController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\MediaController;
 
 /**
  * Landing page
@@ -38,21 +42,22 @@ Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->
  * Rutas a vistas generales
  */
 Route::middleware('auth')->group(function () {
-    Route::get("/profile", function () {
-        return view('profile');
-    })->name('profile');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get("/dashboard", function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Perfil
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    Route::get("/sinister-detail", function () {
-        return view('sinister-detail');
-    })->name('sinisterDetail');
+    // Detalle + comentarios del siniestro
+    Route::get('/sinister-detail/{id}', [SinisterController::class, 'show'])->name('sinisterDetail');
+    Route::post('/sinister-detail/{id}/comment', [SinisterController::class, 'addComment'])->name('sinisterComment');
 
-    Route::get("/consultation", function () {
-        return view('consultation');
-    })->name('consultation');
+    Route::get('/consultation', [ConsultationController::class, 'index'])->name('consultation');
+
+    // Media streaming (blobs)
+    Route::get('/media/sinister/{id}', [MediaController::class, 'sinister'])->name('media.sinister');
+    Route::get('/media/profile/{userId}', [MediaController::class, 'profile'])->name('media.profile');
 });
 
 
@@ -104,7 +109,10 @@ Route::middleware(['auth', 'role:supervisor'])->group(function () {
  * Rutas para el administrador
  */
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get("/manage", function () {
-        return view('admin.employes-manage');
-    })->name('manage');
+    Route::get('/manage', [\App\Http\Controllers\AdminController::class, 'index'])->name('manage');
+    Route::post('/manage', [\App\Http\Controllers\AdminController::class, 'store'])->name('manage.store');
+    Route::get('/manage/{id}/edit', [\App\Http\Controllers\AdminController::class, 'edit'])->name('manage.edit');
+    Route::put('/manage/{id}', [\App\Http\Controllers\AdminController::class, 'update'])->name('manage.update');
+    Route::delete('/manage/{id}', [\App\Http\Controllers\AdminController::class, 'destroy'])->name('manage.destroy');
+    Route::patch('/manage/{id}/restore', [\App\Http\Controllers\AdminController::class, 'restore'])->name('manage.restore');
 });

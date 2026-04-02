@@ -165,6 +165,7 @@ return new class extends Migration
             SELECT
                 s.id                                                        AS sinister_id,
                 s.folio                                                     AS sinister_folio,
+                s.sinister_number                                           AS sinister_number
                 s.status                                                    AS sinister_status,
                 p.insured_id,
                 CONCAT(vm.brand, ' ', vm.sub_brand, ' ', vm.year)          AS vehicle_data,
