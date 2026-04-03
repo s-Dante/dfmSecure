@@ -7,6 +7,9 @@ use App\Http\Controllers\SinisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\InsuredVehicleController;
+use App\Http\Controllers\InsuredPolicyController;
 
 /**
  * Landing page
@@ -65,15 +68,15 @@ Route::middleware('auth')->group(function () {
  * Rutas del asegurado
  */
 Route::middleware(['auth', 'role:insured'])->group(function () {
-    Route::get("/my-vehicles", [\App\Http\Controllers\InsuredVehicleController::class, 'index'])->name('myVehicles');
-    Route::post("/my-vehicles", [\App\Http\Controllers\InsuredVehicleController::class, 'store'])->name('myVehicles.store');
-    Route::get("/my-vehicles/{id}/edit", [\App\Http\Controllers\InsuredVehicleController::class, 'edit'])->name('myVehicles.edit');
-    Route::put("/my-vehicles/{id}", [\App\Http\Controllers\InsuredVehicleController::class, 'update'])->name('myVehicles.update');
-    Route::delete("/my-vehicles/{id}", [\App\Http\Controllers\InsuredVehicleController::class, 'destroy'])->name('myVehicles.destroy');
+    Route::get("/my-vehicles", [InsuredVehicleController::class, 'index'])->name('myVehicles');
+    Route::post("/my-vehicles", [InsuredVehicleController::class, 'store'])->name('myVehicles.store');
+    Route::get("/my-vehicles/{id}/edit", [InsuredVehicleController::class, 'edit'])->name('myVehicles.edit');
+    Route::put("/my-vehicles/{id}", [InsuredVehicleController::class, 'update'])->name('myVehicles.update');
+    Route::delete("/my-vehicles/{id}", [InsuredVehicleController::class, 'destroy'])->name('myVehicles.destroy');
 
-    Route::get("/my-policies", [\App\Http\Controllers\InsuredPolicyController::class, 'index'])->name('myPolicies');
-    Route::get("/my-policies/create", [\App\Http\Controllers\InsuredPolicyController::class, 'create'])->name('myPolicies.create');
-    Route::post("/my-policies", [\App\Http\Controllers\InsuredPolicyController::class, 'store'])->name('myPolicies.store');
+    Route::get("/my-policies", [InsuredPolicyController::class, 'index'])->name('myPolicies');
+    Route::get("/my-policies/create", [InsuredPolicyController::class, 'create'])->name('myPolicies.create');
+    Route::post("/my-policies", [InsuredPolicyController::class, 'store'])->name('myPolicies.store');
 });
 
 
@@ -111,10 +114,10 @@ Route::middleware(['auth', 'role:supervisor'])->group(function () {
  * Rutas para el administrador
  */
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/manage', [\App\Http\Controllers\AdminController::class, 'index'])->name('manage');
-    Route::post('/manage', [\App\Http\Controllers\AdminController::class, 'store'])->name('manage.store');
-    Route::get('/manage/{id}/edit', [\App\Http\Controllers\AdminController::class, 'edit'])->name('manage.edit');
-    Route::put('/manage/{id}', [\App\Http\Controllers\AdminController::class, 'update'])->name('manage.update');
-    Route::delete('/manage/{id}', [\App\Http\Controllers\AdminController::class, 'destroy'])->name('manage.destroy');
-    Route::patch('/manage/{id}/restore', [\App\Http\Controllers\AdminController::class, 'restore'])->name('manage.restore');
+    Route::get('/manage', [AdminController::class, 'index'])->name('manage');
+    Route::post('/manage', [AdminController::class, 'store'])->name('manage.store');
+    Route::get('/manage/{id}/edit', [AdminController::class, 'edit'])->name('manage.edit');
+    Route::put('/manage/{id}', [AdminController::class, 'update'])->name('manage.update');
+    Route::delete('/manage/{id}', [AdminController::class, 'destroy'])->name('manage.destroy');
+    Route::patch('/manage/{id}/restore', [AdminController::class, 'restore'])->name('manage.restore');
 });

@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\VehicleModel;
+use App\Models\Policy;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class InsuredVehicleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vehicles = auth()->user()->vehicles()->with(['vehicleModel', 'policy'])->get();
-        $vehiclesJson = file_get_contents(database_path('data/vehicles.json'));
-        return view('insured.my-vehicles', compact('vehicles', 'vehiclesJson'));
+        $user = $request->user();
+        $vehicles = $user->vehicles()->with(['vehicleModel', 'policy'])->get();
+        $vehiclesJSON = json_decode(file_get_contents(database_path('data/vehicles.json')), true);
+        //dd($vehiclesJSON);
+        return view('insured.my-vehicles', compact('vehicles', 'vehiclesJSON'));
     }
 
     public function store(Request $request)
@@ -25,7 +30,7 @@ class InsuredVehicleController extends Controller
             'plate' => 'required|string'
         ]);
 
-        $vm = \App\Models\VehicleModel::firstOrCreate([
+        $vm = VehicleModel::firstOrCreate([
             'year' => $validated['year'],
             'brand' => $validated['brand'],
             'sub_brand' => $validated['sub_brand'],
@@ -33,64 +38,63 @@ class InsuredVehicleController extends Controller
             'color' => $validated['color']
         ]);
 
-        auth()->user()->vehicles()->create([
-            'vin' => strtoupper($validated['vin']),
-            'plate' => strtoupper($validated['plate']),
+        $user = $request->user();
+        $user->vehicles()->create([
+            'vin' => $validated['vin'],
+            'plate' => $validated['plate'],
             'vehicle_model_id' => $vm->id
         ]);
 
-        return redirect()->route('myVehicles')->with('success', 'Vehículo registrado exitosamente.');
+        return redirect()->route('myVehicles')->with('success', 'Vehículo agregado correctamente');
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $vehicle = auth()->user()->vehicles()->with('vehicleModel')->findOrFail($id);
+        $user = $request->user();
+        $vehicle = $user->vehicles()->with('vehicleModel')->findOrFail($id);
         return view('insured.my-vehicles-edit', compact('vehicle'));
     }
 
     public function update(Request $request, $id)
     {
-        $vehicle = auth()->user()->vehicles()->findOrFail($id);
+        $user = $request->user();
+        $vehicle = $user->vehicles()->findOrFail($id);
 
         $validated = $request->validate([
-            'color' => 'required|string',
+            'color' => 'requiredd|string',
             'vin' => 'required|string|unique:insured_vehicles,vin,' . $vehicle->id,
-            'plate' => 'required|string',
+            'plate' => 'required|string'
         ]);
 
-        // Per user request, maybe allow changing brand/model? They asked "bloqueamos la marca/modelo y solo dejamos editar Placas, Color y VIN?"
-        // I will only allow Color, vin, plate to maintain policy integrity.
-        
         $vehicle->update([
             'vin' => strtoupper($validated['vin']),
             'plate' => strtoupper($validated['plate'])
         ]);
 
-        $oldVm = $vehicle->vehicleModel;
-        $newVm = \App\Models\VehicleModel::firstOrCreate([
-            'year' => $oldVm->year,
-            'brand' => $oldVm->brand,
-            'sub_brand' => $oldVm->sub_brand,
-            'version' => $oldVm->version,
+        $oldVIM = $vehicle->vehicleModel;
+        $newVIM = VehicleModel::firstOrCreate([
+            'year' => $oldVIM->year,
+            'brand' => $oldVIM->brand,
+            'sub_brand' => $oldVIM->sub_brand,
+            'version' => $oldVIM->version,
             'color' => $validated['color']
         ]);
 
-        if ($vehicle->vehicle_model_id !== $newVm->id) {
-            $vehicle->update(['vehicle_model_id' => $newVm->id]);
+        if ($vehicle->vehicle_model_id != $newVIM->id) {
+            $vehicle->update(['vehicle_model_id' => $newVIM->id]);
         }
 
-        return redirect()->route('myVehicles')->with('success', 'Vehículo actualizado exitosamente.');
+        return redirect()->route('myVehicles')->with('success', 'Vehículo actualizado correctamente');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $vehicle = auth()->user()->vehicles()->findOrFail($id);
-        
-        if (\App\Models\Policy::where('vehicle_id', $vehicle->id)->exists()) {
-            return back()->withErrors(['error' => 'No puedes eliminar un vehículo que tiene una póliza asociada.']);
+        $user = $request->user();
+        $vehicle = $user->vehicles()->findOrFail($id);
+        if (Policy::where('vehicle_id', $vehicle->id)->exists()) {
+            return back()->withErrors(['error' => 'No puedes eliminar un vehiculo que tiene una poliza asociada']);
         }
-
         $vehicle->delete();
-        return redirect()->route('myVehicles')->with('success', 'Vehículo eliminado.');
+        return redirect()->route('myVehicles')->with('success', 'Vehículo eliminado correctamente');
     }
 }

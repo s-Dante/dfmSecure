@@ -3,57 +3,59 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+use App\Models\Plan;
+use App\Models\Policy;
+
+use App\Enums\PolicyStatusEnum;
 
 class InsuredPolicyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $policies = auth()->user()->policies()->with(['vehicle', 'plan'])->get();
+        $user = $request->user();
+        $policies = $user->policies()->with(['vehicle', 'plan'])->get();
         return view('insured.my-policies', compact('policies'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        // Obtener vehículos sin póliza (whereDoesntHave)
-        $uninsuredVehicles = auth()->user()->vehicles()->whereDoesntHave('policy')->get();
-        // Cargar json de planes
-        $plansJson = json_decode(file_get_contents(database_path('data/plans.json')), true);
+        $user = $request->user();
+        $uninsuredVehicles = $user->vehicles()->whereDoesntHave('policy')->get();
+        $plansJSON = json_decode(file_get_contents(database_path('data/plans.json')), true);
+        $dbPlans = Plan::all()->keyBy('name');
 
-        // Si tenemos la tabla plans y queremos empatar los IDs
-        $dbPlans = \App\Models\Plan::all()->keyBy('name');
-
-        return view('insured.my-policies-create', compact('uninsuredVehicles', 'plansJson', 'dbPlans'));
+        return view('insured.my-policies-create', compact('uninsuredVehicles', 'plansJSON', 'dbPlans'));
     }
 
     public function store(Request $request)
     {
+        $user = $request->user();
         $validated = $request->validate([
             'vehicle_id' => 'required|exists:insured_vehicles,id',
             'plan_id' => 'required|exists:plans,id',
-            'payment_period' => 'required|string'
         ]);
 
-        // Verificar si el vehículo ya tiene póliza
-        $vehicle = auth()->user()->vehicles()->findOrFail($validated['vehicle_id']);
+        $vehicle = $user->vehicles()->findOrFail($validated['vehicle_id']);
         if ($vehicle->policy()->exists()) {
-            return back()->withErrors(['error' => 'Este vehículo ya tiene una póliza activa.']);
+            return back()->withErrors(['error' => 'Este vehiculo ya tiene una poliza actica']);
         }
 
-        // Crear la póliza a futuro 1 año
         $startDate = now();
         $endDate = clone $startDate;
         $endDate->addYear();
 
-        $policy = \App\Models\Policy::create([
-            'folio' => strtoupper(\Illuminate\Support\Str::random(10)), // O generado
-            'status' => \App\Enums\PolicyStatusEnum::ACTIVE,
+        $policy = Policy::create([
+            'folio' => Str::uuid(),
+            'status' => PolicyStatusEnum::ACTIVE,
             'begin_validity' => $startDate,
             'end_validity' => $endDate,
             'vehicle_id' => $vehicle->id,
-            'insured_id' => auth()->id(),
+            'insured_id' => $user->id,
             'plan_id' => $validated['plan_id']
         ]);
 
-        return redirect()->route('myPolicies')->with('success', '¡Póliza adquirida exitosamente! Ahora tu vehículo está asegurado.');
+        return redirect()->route('myPolicies')->with('success', '¡Poliza adquirida exitosamente! Ahora tu vehiclo esta asegurado');
     }
 }
