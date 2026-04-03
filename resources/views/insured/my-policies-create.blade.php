@@ -112,8 +112,8 @@
 
         <script>
             // Datos inyectados desde Laravel
-            const plans = @json($plansJSON);
-
+            const plansData = @json($plansJSON);
+            const dbPlans = @json($dbPlans);
 
             // Estado de la aplicación
             let state = {
@@ -150,7 +150,7 @@
                 // 3. Función para renderizar los planes
                 function renderPlans() {
                     plansGrid.innerHTML = '';
-                    plans.forEach(p => {
+                    plansData.forEach(p => {
                         const isSelected = state.currentPlanName === p.name;
                         const card = document.createElement('div');
 
@@ -205,7 +205,7 @@
 
                 // 5. Actualizar el precio total
                 function updateTotal() {
-                    const currentPlan = plans.find(p => p.name === state.currentPlanName);
+                    const currentPlan = plansData.find(p => p.name === state.currentPlanName);
                     if (currentPlan) {
                         const price = currentPlan.costo[state.selectedPeriod];
                         totalPriceElement.textContent = `$${price.toLocaleString('es-MX')}`;
