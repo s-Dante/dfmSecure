@@ -53,7 +53,6 @@
                 <form id="purchaseForm" action="{{ route('myPolicies.store') }}" method="POST" class="space-y-6">
                     @csrf
                     <input type="hidden" name="plan_id" id="input_plan_id">
-                    <input type="hidden" name="payment_period" id="input_payment_period" value="anual">
 
                     <select name="vehicle_id" id="vehicle_select" class="w-full md:w-1/2 px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary font-bold block" required>
                         <option value="">— Múltiples disponibles, elige uno —</option>
@@ -79,32 +78,25 @@
 
                 <h2 class="text-xl font-bold text-quaternary mb-6 flex items-center gap-2">
                     <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm">3</span>
-                    Método de Pago y Confirmación
+                    Confirmar Adquisición
                 </h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div>
-                        <label class="text-sm font-semibold text-tertiary mb-1.5 block">Selecciona Periodo de Pago</label>
-                        <select id="period_select" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary font-bold block mb-4">
-                            <option value="anual">Anual (Pago Único)</option>
-                            <option value="semestral">Semestral</option>
-                            <option value="trimestral">Trimestral</option>
-                            <option value="bimestral">Bimestral</option>
-                        </select>
-                        <p class="text-xs text-tertiary">Al confirmar y cobrar aceptará los <a href="#" class="text-accent underline hover:text-black">Términos y Condiciones</a>.</p>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex-1">
+                        <div class="bg-secondary/10 p-6 rounded-2xl border border-extra/30">
+                            <p class="text-tertiary font-semibold text-sm mb-2">Plan Seleccionado</p>
+                            <h3 id="selected_plan_name" class="text-2xl font-extrabold text-quaternary mb-1">-</h3>
+                            <p class="text-tertiary text-sm">Vigencia: 1 año desde la fecha de adquisición</p>
+                        </div>
+                        <p class="text-xs text-tertiary mt-4">Al confirmar aceptarás los <a href="#" class="text-accent underline hover:text-black">Términos y Condiciones</a>.</p>
                     </div>
 
-                    <div class="bg-secondary/10 p-6 rounded-2xl border border-extra/30 text-right">
-                        <p class="text-tertiary font-bold text-sm uppercase tracking-wider mb-1">Total a Pagar ahora</p>
-                        <div id="total_price" class="text-4xl font-extrabold text-quaternary mb-4 drop-shadow-sm">$0</div>
-
-                        <button type="submit" form="purchaseForm" class="bg-accent hover:bg-black text-white px-8 py-4 rounded-xl font-extrabold transition-colors shadow-md w-full md:w-auto uppercase tracking-wide text-sm flex items-center gap-2 justify-center ml-auto">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            Confirmar y Pagar
-                        </button>
-                    </div>
+                    <button type="submit" form="purchaseForm" class="bg-accent hover:bg-black text-white px-8 py-4 rounded-xl font-extrabold transition-colors shadow-md uppercase tracking-wide text-sm flex items-center gap-2 justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Adquirir Póliza
+                    </button>
                 </div>
             </section>
             @endif
@@ -118,19 +110,16 @@
             // Estado de la aplicación
             let state = {
                 selectedVehicle: '',
-                currentPlanName: null,
-                selectedPeriod: 'anual'
+                currentPlanName: null
             };
 
             document.addEventListener('DOMContentLoaded', function() {
                 const vehicleSelect = document.getElementById('vehicle_select');
-                const periodSelect = document.getElementById('period_select');
                 const plansSection = document.getElementById('plans_section');
                 const confirmationSection = document.getElementById('confirmation_section');
                 const plansGrid = document.getElementById('plans_grid');
-                const totalPriceElement = document.getElementById('total_price');
                 const inputPlanId = document.getElementById('input_plan_id');
-                const inputPaymentPeriod = document.getElementById('input_payment_period');
+                const selectedPlanNameEl = document.getElementById('selected_plan_name');
 
                 // 1. Manejar cambio de vehículo
                 vehicleSelect.addEventListener('change', function() {
@@ -140,14 +129,7 @@
                     renderPlans();
                 });
 
-                // 2. Manejar cambio de periodo
-                periodSelect.addEventListener('change', function() {
-                    state.selectedPeriod = this.value;
-                    inputPaymentPeriod.value = this.value;
-                    updateTotal();
-                });
-
-                // 3. Función para renderizar los planes
+                // 2. Función para renderizar los planes
                 function renderPlans() {
                     plansGrid.innerHTML = '';
                     plansData.forEach(p => {
@@ -175,10 +157,8 @@
                             <h3 class="text-2xl font-extrabold text-quaternary mb-1">${p.name}</h3>
                             <p class="text-tertiary text-sm font-semibold mb-4 text-accent">Deducible <span>${p.deducible_danos}</span></p>
                             <ul class="space-y-3 mb-6 flex-1">${benefitsHtml}</ul>
-                            <div class="pt-4 border-t border-extra/30 flex items-end gap-1">
-                                <span class="text-3xl font-extrabold text-quaternary">$${p.costo.anual.toLocaleString('es-MX')}</span>
-                                ${(p.name === 'Plus' || p.name === 'Completo') ? '<span class="text-tertiary font-semibold text-sm mb-1 line-through">$12,000</span>' : ''}
-                                <span class="text-tertiary font-semibold text-sm mb-1 ml-auto">/ año</span>
+                            <div class="pt-4 border-t border-extra/30">
+                                <span class="text-lg font-bold text-quaternary">Cobertura Anual</span>
                             </div>
                         `;
 
@@ -187,29 +167,20 @@
                     });
                 }
 
-                // 4. Seleccionar un plan
+                // 3. Seleccionar un plan
                 function selectPlan(name) {
                     state.currentPlanName = name;
                     inputPlanId.value = dbPlans[name];
+                    selectedPlanNameEl.textContent = name;
 
                     confirmationSection.style.display = 'block';
                     renderPlans(); // Re-renderizar para actualizar estilos de selección
-                    updateTotal();
 
                     // Scroll suave a la confirmación
                     confirmationSection.scrollIntoView({
                         behavior: 'smooth',
                         block: 'nearest'
                     });
-                }
-
-                // 5. Actualizar el precio total
-                function updateTotal() {
-                    const currentPlan = plansData.find(p => p.name === state.currentPlanName);
-                    if (currentPlan) {
-                        const price = currentPlan.costo[state.selectedPeriod];
-                        totalPriceElement.textContent = `$${price.toLocaleString('es-MX')}`;
-                    }
                 }
             });
         </script>

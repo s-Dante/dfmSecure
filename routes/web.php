@@ -84,9 +84,10 @@ Route::middleware(['auth', 'role:insured'])->group(function () {
  * Rutas para el ajustador
  */
 Route::middleware(['auth', 'role:adjuster'])->group(function () {
-    Route::get("/sinister-register", function () {
-        return view('adjuster.sinister-register');
-    })->name('sinisterRegister');
+    Route::get("/sinister-register", [\App\Http\Controllers\AdjusterSinisterController::class, 'create'])->name('sinisterRegister');
+    Route::post("/sinister-register", [\App\Http\Controllers\AdjusterSinisterController::class, 'store'])->name('sinisterStore');
+    Route::post("/sinister-register/upload-media", [\App\Http\Controllers\AdjusterSinisterController::class, 'uploadMedia'])->name('sinister.uploadMedia');
+    Route::post("/sinister-register/upload-chunk", [\App\Http\Controllers\AdjusterSinisterController::class, 'uploadChunk'])->name('sinister.uploadChunk');
 
     Route::get("/sinister-edit", function () {
         return view('adjuster.sinister-edit');
@@ -103,9 +104,8 @@ Route::middleware(['auth', 'role:supervisor'])->group(function () {
         return view('supervisor.sinister-search');
     })->name('search');
 
-    Route::get("/supervisor/manage", function () {
-        return view('supervisor.sinister-manage');
-    })->name('sinisterManage');
+    Route::get("/supervisor/manage/{id}", [\App\Http\Controllers\SupervisorSinisterController::class, 'edit'])->name('supervisor.sinisterManage');
+    Route::put("/supervisor/manage/{id}", [\App\Http\Controllers\SupervisorSinisterController::class, 'updateStatus'])->name('supervisor.updateStatus');
 });
 
 

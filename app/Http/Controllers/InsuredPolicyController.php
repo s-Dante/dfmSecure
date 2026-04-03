@@ -24,7 +24,7 @@ class InsuredPolicyController extends Controller
         $user = $request->user();
         $uninsuredVehicles = $user->vehicles()->whereDoesntHave('policy')->get();
         $plansJSON = json_decode(file_get_contents(database_path('data/plans.json')), true);
-        $dbPlans = Plan::all()->keyBy('name');
+        $dbPlans = Plan::all()->pluck('id', 'name');
 
         return view('insured.my-policies-create', compact('uninsuredVehicles', 'plansJSON', 'dbPlans'));
     }

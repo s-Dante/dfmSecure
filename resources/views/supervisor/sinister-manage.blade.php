@@ -1,241 +1,150 @@
 @php
     $styles = [
-        'page_container' => 'w-full max-w-5xl mx-auto space-y-8 pb-12',
-
-        // Header
-        'header_section' => 'flex flex-col md:flex-row justify-between items-start md:items-center py-4 gap-4',
-        'page_title' => 'text-3xl font-extrabold text-quaternary flex items-center gap-3',
-        'page_subtitle' => 'text-tertiary mt-1',
-
-        // Sections
-        'section_card' => 'bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-extra/30 relative overflow-hidden mb-6',
-        'section_title' => 'text-xl font-bold text-quaternary mb-6 flex items-center gap-2 border-b border-extra/30 pb-4',
-
-        // Status Large Dropdown (Supervisor Active)
-        'status_container' => 'bg-quaternary rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden shadow-lg',
-
-        // Inputs
-        'input_group' => 'flex flex-col gap-1.5',
-        'label' => 'text-sm font-semibold text-tertiary',
-        'input' => 'w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary',
-        'input_readonly' => 'w-full px-4 py-3 bg-secondary/30 text-tertiary font-medium rounded-xl border border-transparent cursor-not-allowed',
-        'textarea_readonly' => 'w-full px-4 py-3 bg-secondary/30 text-tertiary font-medium rounded-xl border border-transparent cursor-not-allowed resize-none min-h-[120px]',
-
-        // Buttons
-        'btn_primary' => 'bg-accent hover:bg-black text-white px-8 py-3 rounded-xl font-bold transition-colors inline-flex items-center gap-2 shadow-sm',
-        'btn_secondary' => 'bg-white hover:bg-secondary/20 text-quaternary px-6 py-3 rounded-xl font-semibold transition-colors border border-extra/50',
-
-        // Gallery 
-        'gallery_grid' => 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4',
-        'gallery_item' => 'aspect-square rounded-2xl bg-secondary/20 border border-extra/30 relative group overflow-hidden pointer-events-none', // Pointer events none so it matches edit view (no actions inside)
-        'gallery_img' => 'w-full h-full object-cover',
+        'page_container' => 'w-full max-w-5xl mx-auto pb-10 space-y-6',
+        'card'           => 'bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-extra/30',
+        'section_title'  => 'text-xl font-bold text-quaternary mb-4 flex items-center gap-2 border-b border-extra/30 pb-3',
+        'data_grid'      => 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-8 mt-6',
+        'data_item'      => 'flex flex-col',
+        'data_label'     => 'text-sm font-semibold text-tertiary mb-1',
+        'data_value'     => 'text-base font-bold text-quaternary',
+        'input_group'    => 'flex flex-col gap-1.5 mt-6',
+        'label'          => 'text-sm font-semibold text-tertiary',
+        'select'         => 'w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary appearance-none font-semibold disabled:opacity-50 disabled:cursor-not-allowed',
+        'textarea'       => 'w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary resize-y min-h-[120px]',
+        'btn_primary'    => 'bg-accent hover:bg-black text-white px-8 py-3 rounded-xl font-bold transition-colors inline-flex items-center gap-2 justify-center shadow-sm w-full sm:w-auto',
     ];
 
-    // Dummy data to manage
-    $sinister = [
-        'id' => 101,
-        'folio' => 'SIN-2023-089A',
-        'status' => 'En Revisión', // 'Pendiente', 'En Revisión', 'Aprobado', 'Rechazado', 'Cerrado'
-        'occur_date' => '2023-11-05T14:30',
-        'report_date' => '2023-11-05T15:00',
-        'close_date' => null,
-        'ublication' => 'Av. Universidad 1000, CDMX',
-        'description' => 'Colisión trasera leve en semáforo. Daños en parachoques y cajuela. Ambas partes presentes y conscientes.',
-        'policy' => 'POL-8273-ABCD-1029',
-        'vehicle' => 'Ford Mustang GT (2024)',
-        'insured' => 'Juan Pérez'
-    ];
+    // Status details
+    $statusRaw = $sinister->status instanceof \BackedEnum ? $sinister->status->value : (string) $sinister->status;
+    $statusLabel = $sinister->status instanceof \App\Enums\SinisterStatusEnum
+        ? $sinister->status->label()
+        : ucfirst(str_replace('_', ' ', $statusRaw));
 
-    $evidence = [
-        'https://images.unsplash.com/photo-1543398933-2195f2fc4de7?w=400&q=80',
-        'https://images.unsplash.com/photo-1520108398463-5490bc89a7da?w=400&q=80',
-        'https://images.unsplash.com/photo-1600587713431-70fb905c088f?w=400&q=80',
-    ];
+    // Valid transitions
+    $availableStatuses = $sinister->status->nextStatuses();
+    $isClosed = empty($availableStatuses);
+
+    // Helpers 
+    $vehicle     = $sinister->policy?->vehicle;
+    $vm          = $vehicle?->vehicleModel;
+    $vehicleName = $vm ? trim(($vm->brand ?? '') . ' ' . ($vm->sub_brand ?? '') . ' ' . ($vm->year ?? '')) : 'N/A';
+    $insured     = $sinister->policy?->insured;
+    $insuredName = $insured ? trim(($insured->name ?? '') . ' ' . ($insured->father_lastname ?? '')) : 'N/A';
 @endphp
 
 <x-app-layout>
     <x-slot name="content">
-        <!-- x-data controlling status to show/hide close_date dynamically -->
-        <div class="{{ $styles['page_container'] }}" x-data="{ status: '{{ $sinister['status'] }}' }">
+        <div class="{{ $styles['page_container'] }}">
 
-            <header class="{{ $styles['header_section'] }}">
+            {{-- Header --}}
+            <header class="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-2">
                 <div>
                     <div class="flex items-center gap-3 mb-2">
-                        <a href="{{ url()->previous() }}"
+                        <a href="{{ route('sinisterDetail', $sinister->id) }}"
                             class="w-10 h-10 rounded-xl bg-white border border-extra/50 flex items-center justify-center text-tertiary hover:text-accent hover:border-accent transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                         </a>
-                        <h1 class="{{ $styles['page_title'] }}">Dictaminar Siniestro</h1>
+                        <h1 class="text-3xl font-extrabold text-quaternary">Dictaminar Siniestro</h1>
                     </div>
-                    <p class="{{ $styles['page_subtitle'] }}">Revisando folio <strong
-                            class="font-mono text-quaternary">{{ $sinister['folio'] }}</strong> • Dictaminador Oficial
-                    </p>
+                    <p class="text-tertiary mt-1">Folio: <strong class="font-mono text-quaternary">{{ $sinister->folio }}</strong></p>
+                </div>
+                <div class="bg-secondary/20 px-4 py-2 rounded-xl flex items-center gap-2 border border-extra/50">
+                    <span class="text-xs font-bold text-tertiary uppercase tracking-wider">Estatus Actual:</span>
+                    <span class="text-sm font-extrabold text-accent">{{ $statusLabel }}</span>
                 </div>
             </header>
 
-            <form action="#" method="POST">
+            {{-- Errores --}}
+            @if ($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl mb-6">
+                    <ul class="list-disc pl-5 text-sm font-semibold">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('supervisor.updateStatus', $sinister->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <!-- THE ONE DIFFERENCE: Supervisor CAN edit status, so we put the big Status Dropdown here from the original layout -->
-                <div class="{{ $styles['status_container'] }} mb-8">
-                    <!-- Decoración -->
-                    <svg class="absolute inset-0 w-full h-full opacity-5 pointer-events-none text-white"
-                        fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <pattern id="lines" width="10" height="10" patternUnits="userSpaceOnUse">
-                            <path d="M0 10L10 0" stroke="currentColor" stroke-width="1" fill="none" />
-                        </pattern>
-                        <rect width="100%" height="100%" fill="url(#lines)" />
-                    </svg>
-
-                    <div class="relative z-10 space-y-1">
-                        <h2 class="text-white text-2xl font-extrabold flex items-center gap-2">Cambiar Estatus del
-                            Siniestro</h2>
-                        <p class="text-white/70 text-sm max-w-sm">Determine el estatus operativo para este incidente.
-                        </p>
+                {{-- Contexto General --}}
+                <div class="{{ $styles['card'] }}">
+                    <h2 class="{{ $styles['section_title'] }}">Contexto y Datos Generales</h2>
+                    <div class="{{ $styles['data_grid'] }}">
+                        <div class="{{ $styles['data_item'] }}">
+                            <span class="{{ $styles['data_label'] }}">Póliza Involucrada</span>
+                            <span class="{{ $styles['data_value'] }}">{{ $sinister->policy?->policy_number ?? 'N/A' }}</span>
+                        </div>
+                        <div class="{{ $styles['data_item'] }}">
+                            <span class="{{ $styles['data_label'] }}">Vehículo</span>
+                            <span class="{{ $styles['data_value'] }}">{{ $vehicleName }} ({{ $vehicle?->plate ?? 'N/A' }})</span>
+                        </div>
+                        <div class="{{ $styles['data_item'] }}">
+                            <span class="{{ $styles['data_label'] }}">Asegurado</span>
+                            <span class="{{ $styles['data_value'] }}">{{ $insuredName }}</span>
+                        </div>
+                        <div class="{{ $styles['data_item'] }}">
+                            <span class="{{ $styles['data_label'] }}">Fecha Ocurrencia</span>
+                            <span class="{{ $styles['data_value'] }}">{{ $sinister->occur_date ? $sinister->occur_date->format('d/M/Y H:i') : 'N/A' }}</span>
+                        </div>
+                        <div class="{{ $styles['data_item'] }}">
+                            <span class="{{ $styles['data_label'] }}">Fecha Reporte</span>
+                            <span class="{{ $styles['data_value'] }}">{{ $sinister->report_date ? $sinister->report_date->format('d/M/Y H:i') : 'N/A' }}</span>
+                        </div>
+                        @if($isClosed && $sinister->close_date)
+                        <div class="{{ $styles['data_item'] }}">
+                            <span class="{{ $styles['data_label'] }}">Cerrado Oficialmente</span>
+                            <span class="{{ $styles['data_value'] }} text-green-600">{{ $sinister->close_date->format('d/M/Y H:i') }}</span>
+                        </div>
+                        @endif
                     </div>
+                    <div class="{{ $styles['data_item'] }} mt-6">
+                        <span class="{{ $styles['data_label'] }}">Ubicación del Incidente</span>
+                        <span class="{{ $styles['data_value'] }}">{{ $sinister->location ?? 'N/A' }}</span>
+                    </div>
+                </div>
 
-                    <div class="relative z-10 w-full md:w-auto">
-                        <div class="relative">
-                            <select id="status" name="status" x-model="status"
-                                class="appearance-none bg-white text-quaternary text-lg font-bold px-6 py-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.1)] w-full md:w-72 cursor-pointer outline-none focus:ring-4 focus:ring-accent transition-all border-none">
-                                <option value="Pendiente" {{ $sinister['status'] == 'Pendiente' ? 'selected' : '' }}>
-                                    Pendiente</option>
-                                <option value="En Revisión" {{ $sinister['status'] == 'En Revisión' ? 'selected' : '' }}>
-                                    En Revisión</option>
-                                <option value="Aprobado" {{ $sinister['status'] == 'Aprobado' ? 'selected' : '' }}>Aprobar
-                                    (Procedente)</option>
-                                <option value="Rechazado" {{ $sinister['status'] == 'Rechazado' ? 'selected' : '' }}>
-                                    Rechazar (Improcedente)</option>
-                                <option value="Cerrado" {{ $sinister['status'] == 'Cerrado' ? 'selected' : '' }}>Cerrar
-                                    Expediente</option>
-                            </select>
-                            <div
-                                class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-quaternary">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                {{-- Actualización de Estado --}}
+                <div class="{{ $styles['card'] }}">
+                    <h2 class="{{ $styles['section_title'] }}">Resolución Administrativa</h2>
+                    
+                    @if($isClosed)
+                        <div class="px-5 py-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl text-sm font-semibold mb-6 flex gap-3 items-center">
+                            <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Este siniestro se encuentra catalogado como CERRADO bajo reglas de negocio estrictas. Ya no admite transiciones de estado.
+                        </div>
+                    @endif
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="{{ $styles['input_group'] }} !mt-0">
+                            <label class="{{ $styles['label'] }}" for="status">Estatus Operativo del Siniestro</label>
+                            <div class="relative">
+                                <select name="status" id="status" class="{{ $styles['select'] }}" {{ $isClosed ? 'disabled' : 'required' }}>
+                                    <option value="{{ $statusRaw }}" selected disabled class="text-tertiary">Estatus Actual: {{ $statusLabel }}</option>
+                                    @foreach($availableStatuses as $val => $label)
+                                        <option value="{{ $val }}" {{ old('status') == $val ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <svg class="w-5 h-5 absolute z-10 right-4 top-3.5 text-tertiary pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </div>
+                            <p class="text-xs text-tertiary mt-2">Selecciona un estatus para evolucionar el siniestro con base en el flujo autorizado.</p>
+                        </div>
+
+                        <div class="{{ $styles['input_group'] }} !mt-0">
+                            <label class="{{ $styles['label'] }}" for="comment">Dictamen o Comentario (Opcional)</label>
+                            <textarea id="comment" name="comment" class="{{ $styles['textarea'] }}" placeholder="Añade instrucciones al ajustador, razones del dictamen o resoluciones formales...">{{ old('comment') }}</textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- Info Vinculada (Solo Lectura) -->
-                <div class="{{ $styles['section_card'] }}">
-                    <div class="flex justify-between items-start mb-6 border-b border-extra/30 pb-4">
-                        <h2 class="text-xl font-bold text-quaternary">Contexto de la Póliza</h2>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="{{ $styles['input_group'] }}">
-                            <label class="{{ $styles['label'] }}">Póliza Involucrada</label>
-                            <input type="text" value="{{ $sinister['policy'] }}" class="{{ $styles['input_readonly'] }}"
-                                readonly disabled>
-                        </div>
-                        <div class="{{ $styles['input_group'] }}">
-                            <label class="{{ $styles['label'] }}">Vehículo</label>
-                            <input type="text" value="{{ $sinister['vehicle'] }}"
-                                class="{{ $styles['input_readonly'] }}" readonly disabled>
-                        </div>
-                        <div class="{{ $styles['input_group'] }}">
-                            <label class="{{ $styles['label'] }}">Asegurado</label>
-                            <input type="text" value="{{ $sinister['insured'] }}"
-                                class="{{ $styles['input_readonly'] }}" readonly disabled>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detalles y Fechas (TODAS LECTURA PARA SUPERVISOR EXCEPTO CIERRE DINÁMICO) -->
-                <div class="{{ $styles['section_card'] }}">
-                    <h2 class="{{ $styles['section_title'] }}">Detalles Técnicos y Relato</h2>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                        <div class="{{ $styles['input_group'] }}">
-                            <label class="{{ $styles['label'] }}" for="occur_date">Fecha de Ocurrencia</label>
-                            <input type="datetime-local" id="occur_date" name="occur_date"
-                                class="{{ $styles['input_readonly'] }}" value="{{ $sinister['occur_date'] }}" readonly
-                                disabled>
-                        </div>
-
-                        <div class="{{ $styles['input_group'] }}">
-                            <label class="{{ $styles['label'] }}" for="report_date">Fecha de Reporte</label>
-                            <input type="datetime-local" id="report_date" name="report_date"
-                                class="{{ $styles['input_readonly'] }}" value="{{ $sinister['report_date'] }}" readonly
-                                disabled>
-                        </div>
-
-                        <!-- Fecha de Cierre (Dinámica/Writeable only when closed) -->
-                        <div class="{{ $styles['input_group'] }}" x-show="status === 'Cerrado'" x-cloak>
-                            <label class="{{ $styles['label'] }} text-tertiary flex items-center gap-1"
-                                for="close_date">
-                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                    </path>
-                                </svg>
-                                Fecha de Cierre Oficial (Asignar)
-                            </label>
-                            <input type="datetime-local" id="close_date" class="{{ $styles['input'] }}"
-                                value="{{ $sinister['close_date'] ?? date('Y-m-d\TH:i') }}"
-                                x-bind:disabled="status !== 'Cerrado'">
-                        </div>
-                        <div class="lg:col-span-1" x-show="status !== 'Cerrado'"></div> <!-- Spacer -->
-
-                        <div class="{{ $styles['input_group'] }} md:col-span-2 lg:col-span-3">
-                            <label class="{{ $styles['label'] }}" for="ublication">Ubicación del Siniestro</label>
-                            <input type="text" id="ublication" name="ublication" value="{{ $sinister['ublication'] }}"
-                                class="{{ $styles['input_readonly'] }}" readonly disabled>
-                        </div>
-
-                        <div class="{{ $styles['input_group'] }} md:col-span-2 lg:col-span-3 mt-2">
-                            <label class="{{ $styles['label'] }}" for="description">Relato / Dictamen del
-                                Ajustador</label>
-                            <textarea id="description" name="description"
-                                class="{{ $styles['textarea_readonly'] }} text-sm" readonly
-                                disabled>{{ $sinister['description'] }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Evidencia Visual (Visualización sin botones edición) -->
-                <div class="{{ $styles['section_card'] }}">
-                    <div
-                        class="flex flex-col sm:flex-row justify-between sm:items-end mb-4 border-b border-extra/30 pb-4">
-                        <h2 class="text-xl font-bold text-quaternary flex items-center gap-2">
-                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
-                                </path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            Evidencia Almacenada
-                        </h2>
-                    </div>
-
-                    <div class="{{ $styles['gallery_grid'] }}">
-                        <!-- Iterate stored evidence -->
-                        @foreach($evidence as $index => $img_url)
-                            <div class="{{ $styles['gallery_item'] }}">
-                                <img src="{{ $img_url }}" class="{{ $styles['gallery_img'] }}" alt="Evidencia">
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Botones Finales -->
-                <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-extra/30">
+                {{-- Actions --}}
+                <div class="flex justify-end gap-4 mt-2">
+                    <a href="{{ route('sinisterDetail', $sinister->id) }}" class="px-6 py-3 bg-white border border-extra/50 rounded-xl font-bold text-tertiary hover:bg-secondary/20 transition-colors">Cancelar</a>
                     <button type="submit" class="{{ $styles['btn_primary'] }}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Guardar Resolución
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Guardar Dictamen
                     </button>
                 </div>
             </form>

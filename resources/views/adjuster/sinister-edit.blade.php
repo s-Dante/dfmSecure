@@ -187,9 +187,19 @@
 
                     <div class="{{ $styles['gallery_grid'] }}">
                         <!-- Iterate stored evidence -->
-                        @foreach($evidence as $index => $img_url)
+                        @foreach($evidence as $index => $file_url)
+                            @php
+                                $isVideo = \Illuminate\Support\Str::endsWith(strtolower($file_url), ['.mp4', '.mov', '.avi', '.webm', '.ogg']);
+                                // Resolver correctamente el path público si viene directo de la BD
+                                $resolved_url = str_starts_with($file_url, 'http') ? $file_url : asset('storage/' . $file_url);
+                            @endphp
                             <div class="{{ $styles['gallery_item'] }}">
-                                <img src="{{ $img_url }}" class="{{ $styles['gallery_img'] }}" alt="Evidencia">
+                                @if($isVideo)
+                                    <video src="{{ $resolved_url }}" controls preload="metadata" class="w-full h-full object-contain bg-black"></video>
+                                @else
+                                    <img src="{{ $resolved_url }}" class="{{ $styles['gallery_img'] }}" alt="Evidencia">
+                                @endif
+                                
                                 <!-- Helper logic for future delete action -->
                                 <button type="button" class="{{ $styles['gallery_delete'] }}" title="Eliminar Archivo">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
