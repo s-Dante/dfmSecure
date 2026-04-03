@@ -1,21 +1,21 @@
 @php
-    $image = asset('imgs/auth/auth2.jpg');
-    $title = 'Regístrate';
-    $quote = \Illuminate\Foundation\Inspiring::quotes()->random();
+$image = asset('imgs/auth/auth2.jpg');
+$title = 'Regístrate';
+$quote = \Illuminate\Foundation\Inspiring::quotes()->random();
 
-    $styles = [
-        'header_container' => 'mb-5',
-        'heading' => 'text-3xl font-extrabold text-quaternary mb-1',
-        'subheading' => 'text-tertiary text-sm',
-        'form' => 'space-y-3',
-        'grid_2_cols' => 'grid grid-cols-1 sm:grid-cols-2 gap-3',
-        'label' => 'block text-sm font-medium text-quaternary mb-1',
-        'input' => 'w-full px-4 py-2 rounded-xl border border-extra focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all',
-        'submit_btn' => 'w-full bg-accent hover:bg-[#7d9460] text-white font-bold py-3 px-4 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md mt-4',
-        'footer_container' => 'mt-6 text-center border-t border-extra/50 pt-4',
-        'footer_text' => 'text-sm text-tertiary',
-        'footer_link' => 'font-bold text-accent hover:text-[#7d9460] transition-colors ml-1'
-    ];
+$styles = [
+'header_container' => 'mb-5',
+'heading' => 'text-3xl font-extrabold text-quaternary mb-1',
+'subheading' => 'text-tertiary text-sm',
+'form' => 'space-y-3',
+'grid_2_cols' => 'grid grid-cols-1 sm:grid-cols-2 gap-3',
+'label' => 'block text-sm font-medium text-quaternary mb-1',
+'input' => 'w-full px-4 py-2 rounded-xl border border-extra focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all',
+'submit_btn' => 'w-full bg-accent hover:bg-[#7d9460] text-white font-bold py-3 px-4 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md mt-4',
+'footer_container' => 'mt-6 text-center border-t border-extra/50 pt-4',
+'footer_text' => 'text-sm text-tertiary',
+'footer_link' => 'font-bold text-accent hover:text-[#7d9460] transition-colors ml-1'
+];
 @endphp
 
 <x-auth-layout :image="$image" :title="$title" :quote="$quote">
@@ -79,6 +79,17 @@
                 <input type="date" name="birth_date" id="birth_date" class="{{ $styles['input'] }} @error('birth_date') border-red-500 @enderror"
                     value="{{ old('birth_date') }}" required>
                 @error('birth_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="gender" class="{{ $styles['label'] }}">Género</label>
+                <select name="gender" id="gender" class="{{ $styles['input'] }} @error('gender') border-red-500 @enderror" required>
+                    <option value="" disabled selected>Selecciona tu género</option>
+                    @foreach(\App\Enums\GenderEnum::cases() as $gender)
+                    <option value="{{ $gender->value }}" {{ old('gender') == $gender->value ? 'selected' : '' }}>{{ $gender->label() }}</option>
+                    @endforeach
+                </select>
+                @error('gender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div class="{{ $styles['grid_2_cols'] }}">

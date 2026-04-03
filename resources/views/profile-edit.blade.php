@@ -159,6 +159,17 @@
                         Dirección
                     </h2>
                     <div class="{{ $styles['grid_2'] }}">
+                        <div class="md:col-span-2">
+                            <label for="address_type" class="{{ $styles['label'] }}">Tipo de Dirección</label>
+                            <select id="address_type" name="type" class="{{ $styles['select'] }}">
+                                <option value="">— Seleccionar tipo —</option>
+                                @foreach(\App\Enums\AddressTypeEnum::cases() as $type)
+                                    <option value="{{ $type->value }}" {{ old('type', $user->address?->type?->value ?? $user->address?->type) === $type->value ? 'selected' : '' }}>
+                                        {{ $type->label() }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div>
                             <label for="street" class="{{ $styles['label'] }}">Calle</label>
                             <input type="text" id="street" name="street" value="{{ old('street', $user->address?->street) }}" class="{{ $styles['input'] }}">
@@ -181,17 +192,23 @@
                             <label for="zip_code" class="{{ $styles['label'] }}">Código Postal</label>
                             <input type="text" id="zip_code" name="zip_code" value="{{ old('zip_code', $user->address?->zip_code) }}" maxlength="10" class="{{ $styles['input'] }}">
                         </div>
-                        <div>
-                            <label for="city" class="{{ $styles['label'] }}">Ciudad</label>
-                            <input type="text" id="city" name="city" value="{{ old('city', $user->address?->city) }}" class="{{ $styles['input'] }}">
+                        <div class="md:col-span-2">
+                            <label for="country" class="{{ $styles['label'] }}">País</label>
+                            <select id="country" name="country" class="{{ $styles['select'] }}" onchange="loadStates(this.options[this.selectedIndex].dataset.id)">
+                                <option value="">— Seleccionar País —</option>
+                            </select>
                         </div>
                         <div>
                             <label for="state" class="{{ $styles['label'] }}">Estado</label>
-                            <input type="text" id="state" name="state" value="{{ old('state', $user->address?->state) }}" class="{{ $styles['input'] }}">
+                            <select id="state" name="state" class="{{ $styles['select'] }}" onchange="loadCities(this.options[this.selectedIndex].dataset.id)" disabled>
+                                <option value="">— Seleccione primero un país —</option>
+                            </select>
                         </div>
-                        <div class="md:col-span-2">
-                            <label for="country" class="{{ $styles['label'] }}">País</label>
-                            <input type="text" id="country" name="country" value="{{ old('country', $user->address?->country ?? 'México') }}" class="{{ $styles['input'] }}">
+                        <div>
+                            <label for="city" class="{{ $styles['label'] }}">Ciudad</label>
+                            <select id="city" name="city" class="{{ $styles['select'] }}" disabled>
+                                <option value="">— Seleccione primero un estado —</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -251,6 +268,92 @@
                 };
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+        // Dynamic Locations Loader
+        const baseUrl = '{{ asset("storage/locations") }}';
+        
+        let initialCountry = "{{ old('country', $user->address?->country) }}";
+        let initialState = "{{ old('state', $user->address?->state) }}";
+        let initialCity = "{{ old('city', $user->address?->city) }}";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load all countries
+            fetch(`${baseUrl}/countries.json`)
+                .then(r => r.json())
+                .then(data => {
+                    const countrySelect = document.getElementById('country');
+                    countrySelect.innerHTML = '<option value="">— Seleccionar País —</option>';
+                    let selectedId = null;
+                    data.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.dataset.id = c.id;
+                        opt.textContent = c.name;
+                        if (c.name === initialCountry) {
+                            opt.selected = true;
+                            selectedId = c.id;
+                        }
+                        countrySelect.appendChild(opt);
+                    });
+                    if (selectedId) loadStates(selectedId);
+                });
+        });
+
+        function loadStates(countryId) {
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
+            
+            stateSelect.innerHTML = '<option value="">Cargando...</option>';
+            stateSelect.disabled = true;
+            citySelect.innerHTML = '<option value="">— Seleccione primero un estado —</option>';
+            citySelect.disabled = true;
+
+            if (!countryId) return;
+
+            fetch(`${baseUrl}/states/${countryId}.json`)
+                .then(r => r.ok ? r.json() : [])
+                .then(data => {
+                    stateSelect.innerHTML = '<option value="">— Seleccionar Estado —</option>';
+                    let selectedId = null;
+                    data.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.name;
+                        opt.dataset.id = s.id;
+                        opt.textContent = s.name;
+                        if (s.name === initialState) {
+                            opt.selected = true;
+                            selectedId = s.id;
+                        }
+                        stateSelect.appendChild(opt);
+                    });
+                    stateSelect.disabled = false;
+                    if (selectedId) loadCities(selectedId);
+                })
+                .catch(() => stateSelect.innerHTML = '<option value="">Sin estados</option>');
+        }
+
+        function loadCities(stateId) {
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">Cargando...</option>';
+            citySelect.disabled = true;
+
+            if (!stateId) return;
+
+            fetch(`${baseUrl}/cities/${stateId}.json`)
+                .then(r => r.ok ? r.json() : [])
+                .then(data => {
+                    citySelect.innerHTML = '<option value="">— Seleccionar Ciudad —</option>';
+                    data.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.dataset.id = c.id;
+                        opt.textContent = c.name;
+                        if (c.name === initialCity) opt.selected = true;
+                        citySelect.appendChild(opt);
+                    });
+                    citySelect.disabled = false;
+                })
+                .catch(() => citySelect.innerHTML = '<option value="">Sin ciudades</option>');
         }
     </script>
     @endpush

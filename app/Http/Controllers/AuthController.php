@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Enums\RoleEnum;
 use App\Traits\UsesDBObjects;
+use App\Enums\GenderEnum;
 
 class AuthController extends Controller
 {
@@ -110,6 +111,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:80|unique:users',
             'phone' => 'required|string|max:20|unique:users',
             'birth_date' => 'required|date|before_or_equal:-18 years',
+            'gender' => 'required|string|in:' . implode(',', GenderEnum::values()),
             'password' => [
                 'required',
                 'string',
@@ -148,6 +150,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'birth_date' => $validated['birth_date'],
+            'gender' => $validated['gender'],
             'password' => Hash::make($validated['password']),
             'role_id' => $roleId,
         ]);
@@ -171,7 +174,7 @@ class AuthController extends Controller
             $validated['phone'],
             $validated['birth_date'],
             $passwordHash,
-            'other',   // género por defecto (el formulario de registro no pregunta esto aún)
+            $validated['gender'],
             $roleId,
         ]);
 
