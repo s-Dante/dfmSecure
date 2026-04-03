@@ -36,37 +36,41 @@
         'input' => 'w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary',
     ];
 
-    // Dummy Vehicles
-    $vehicles = [
-        [
-            'id' => 1,
-            'brand' => 'Ford',
-            'sub_brand' => 'Mustang',
-            'version' => 'GT V8',
-            'year' => '2024',
-            'color' => 'Gris Carbono',
-            'vin' => '1FA6P8CF4M5123456',
-            'plate' => 'ASD-987-X',
-            'has_policy' => true
-        ],
-        [
-            'id' => 2,
-            'brand' => 'Toyota',
-            'sub_brand' => 'Corolla',
-            'version' => 'XLE CVT',
-            'year' => '2022',
-            'color' => 'Blanco Perla',
-            'vin' => '3T1BR32EXK0987654',
-            'plate' => 'XYZ-123-A',
-            'has_policy' => false
-        ],
-    ];
+    // Colors can be dynamic but for now we let the user write it, or provide a select.
 @endphp
 
 <x-app-layout>
     <x-slot name="content">
         <!-- Main container with Alpine data for toggling the add form -->
-        <div class="{{ $styles['page_container'] }}" x-data="{ showAddForm: false }">
+        <div class="{{ $styles['page_container'] }}" 
+             x-data='{ 
+                showAddForm: false,
+                vehiclesData: {!! $vehiclesJson !!},
+                selectedType: "",
+                selectedYear: "",
+                selectedBrand: "",
+                selectedModel: "",
+                
+                get types() { 
+                    return Object.keys(this.vehiclesData || {}); 
+                },
+                get years() { 
+                    if (!this.selectedType || !this.vehiclesData[this.selectedType]) return [];
+                    return Object.keys(this.vehiclesData[this.selectedType]); 
+                },
+                get brands() { 
+                    if (!this.selectedYear || !this.vehiclesData[this.selectedType][this.selectedYear]) return [];
+                    return Object.keys(this.vehiclesData[this.selectedType][this.selectedYear]); 
+                },
+                get models() { 
+                    if (!this.selectedBrand || !this.vehiclesData[this.selectedType][this.selectedYear][this.selectedBrand]) return [];
+                    return Object.keys(this.vehiclesData[this.selectedType][this.selectedYear][this.selectedBrand]); 
+                },
+                get versions() { 
+                    if (!this.selectedModel || !this.vehiclesData[this.selectedType][this.selectedYear][this.selectedBrand][this.selectedModel]) return [];
+                    return this.vehiclesData[this.selectedType][this.selectedYear][this.selectedBrand][this.selectedModel]; 
+                }
+             }'>
             
             <!-- Encabezado -->
             <header class="{{ $styles['header_section'] }}">
@@ -105,44 +109,83 @@
                     Registrar Nuevo Vehículo
                 </h2>
                 
-                <form action="#" method="POST" class="space-y-6">
+                @if($errors->any())
+                    <div class="mb-4 px-5 py-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm font-semibold">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>- {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <form action="{{ route('myVehicles.store') }}" method="POST" class="space-y-6">
                     @csrf
                     <!-- Grid de inputs -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         
                         <div class="{{ $styles['input_group'] }}">
+                            <label class="{{ $styles['label'] }}" for="type">Tipo de Vehículo</label>
+                            <select id="type" name="type" x-model="selectedType" @change="selectedYear=''; selectedBrand=''; selectedModel=''" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary" required>
+                                <option value="">— Seleccionar —</option>
+                                <template x-for="type in types" :key="type">
+                                    <option :value="type" x-text="type"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <div class="{{ $styles['input_group'] }}">
+                            <label class="{{ $styles['label'] }}" for="year">Año</label>
+                            <select id="year" name="year" x-model="selectedYear" @change="selectedBrand=''; selectedModel=''" :disabled="!selectedType" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary disabled:opacity-50" required>
+                                <option value="">— Seleccionar —</option>
+                                <template x-for="year in years" :key="year">
+                                    <option :value="year" x-text="year"></option>
+                                </template>
+                            </select>
+                        </div>
+                        
+                        <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="brand">Marca</label>
-                            <input type="text" id="brand" name="brand" class="{{ $styles['input'] }}" placeholder="Ej. Ford" required>
+                            <select id="brand" name="brand" x-model="selectedBrand" @change="selectedModel=''" :disabled="!selectedYear" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary disabled:opacity-50" required>
+                                <option value="">— Seleccionar —</option>
+                                <template x-for="brand in brands" :key="brand">
+                                    <option :value="brand" x-text="brand"></option>
+                                </template>
+                            </select>
                         </div>
                         
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="sub_brand">Sub-Marca / Modelo</label>
-                            <input type="text" id="sub_brand" name="sub_brand" class="{{ $styles['input'] }}" placeholder="Ej. Mustang" required>
+                            <select id="sub_brand" name="sub_brand" x-model="selectedModel" :disabled="!selectedBrand" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary disabled:opacity-50" required>
+                                <option value="">— Seleccionar —</option>
+                                <template x-for="model in models" :key="model">
+                                    <option :value="model" x-text="model"></option>
+                                </template>
+                            </select>
                         </div>
                         
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="version">Versión</label>
-                            <input type="text" id="version" name="version" class="{{ $styles['input'] }}" placeholder="Ej. GT V8" required>
-                        </div>
-                        
-                        <div class="{{ $styles['input_group'] }}">
-                            <label class="{{ $styles['label'] }}" for="year">Año</label>
-                            <input type="number" id="year" name="year" class="{{ $styles['input'] }}" placeholder="Ej. 2024" min="1990" max="{{ date('Y') + 1 }}" required>
+                            <select id="version" name="version" :disabled="!selectedModel" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary disabled:opacity-50" required>
+                                <option value="">— Seleccionar —</option>
+                                <template x-for="ver in versions" :key="ver">
+                                    <option :value="ver" x-text="ver"></option>
+                                </template>
+                            </select>
                         </div>
                         
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="color">Color</label>
-                            <input type="text" id="color" name="color" class="{{ $styles['input'] }}" placeholder="Ej. Gris Carbono" required>
+                            <input type="text" id="color" name="color" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary" placeholder="Ej. Gris Carbono" required>
                         </div>
                         
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="plate">Placas</label>
-                            <input type="text" id="plate" name="plate" class="{{ $styles['input'] }}" placeholder="Ej. ASD-987-X" required>
+                            <input type="text" id="plate" name="plate" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary uppercase" placeholder="Ej. ASD-987-X" required>
                         </div>
                         
-                        <div class="{{ $styles['input_group'] }} md:col-span-2 lg:col-span-3">
-                            <label class="{{ $styles['label'] }}" for="vin">Número de Serie (VIN) <span class="text-tertiary font-normal text-xs ml-2">(17 caracteres)</span></label>
-                            <input type="text" id="vin" name="vin" class="{{ $styles['input'] }} uppercase" placeholder="Ej. 1FA6P8CF4M5123456" maxlength="17" required>
+                        <div class="{{ $styles['input_group'] }} md:col-span-2 lg:col-span-2">
+                            <label class="{{ $styles['label'] }}" for="vin">Número de Serie (VIN) <span class="text-tertiary font-normal text-xs ml-2">(Caracteres únicos)</span></label>
+                            <input type="text" id="vin" name="vin" class="w-full px-4 py-3 bg-secondary/10 rounded-xl border border-extra/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-quaternary uppercase" placeholder="Ej. 1FA6P8CF4M5123456" maxlength="17" required>
                         </div>
                     </div>
                     
@@ -161,30 +204,30 @@
                         
                         <div class="{{ $styles['card_header'] }}">
                             <div>
-                                <h3 class="{{ $styles['car_brand'] }}">{{ $vehicle['brand'] }}</h3>
-                                <h2 class="{{ $styles['car_title'] }}">{{ $vehicle['sub_brand'] }} {{ $vehicle['version'] }}</h2>
+                                <h3 class="{{ $styles['car_brand'] }}">{{ $vehicle->vehicleModel->brand }}</h3>
+                                <h2 class="{{ $styles['car_title'] }}">{{ $vehicle->vehicleModel->sub_brand }} {{ $vehicle->vehicleModel->version }}</h2>
                             </div>
-                            <span class="{{ $styles['car_badge'] }}">{{ $vehicle['year'] }}</span>
+                            <span class="{{ $styles['car_badge'] }}">{{ $vehicle->vehicleModel->year }}</span>
                         </div>
                         
                         <div class="{{ $styles['info_grid'] }}">
                             <div class="{{ $styles['info_item'] }}">
                                 <span class="{{ $styles['info_label'] }}">Placas</span>
-                                <span class="{{ $styles['info_value'] }}">{{ $vehicle['plate'] }}</span>
+                                <span class="{{ $styles['info_value'] }}">{{ $vehicle->plate }}</span>
                             </div>
                             <div class="{{ $styles['info_item'] }}">
                                 <span class="{{ $styles['info_label'] }}">Color</span>
-                                <span class="{{ $styles['info_value'] }}">{{ $vehicle['color'] }}</span>
+                                <span class="{{ $styles['info_value'] }}">{{ $vehicle->vehicleModel->color }}</span>
                             </div>
                             <div class="{{ $styles['info_item'] }} col-span-2">
                                 <span class="{{ $styles['info_label'] }}">Número de Serie (VIN)</span>
-                                <span class="{{ $styles['info_value'] }} font-mono tracking-wider">{{ $vehicle['vin'] }}</span>
+                                <span class="{{ $styles['info_value'] }} font-mono tracking-wider">{{ $vehicle->vin }}</span>
                             </div>
                         </div>
                         
                         <!-- Status Policy & Footer -->
                         <div class="{{ $styles['card_footer'] }}">
-                            @if($vehicle['has_policy'])
+                            @if($vehicle->policy()->active()->exists())
                                 <span class="inline-flex items-center gap-1.5 text-green-600 bg-green-50 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Asegurado
@@ -196,10 +239,21 @@
                                 </span>
                             @endif
                             
-                            <a href="{{ route('editVehicle') }}" class="{{ $styles['btn_secondary'] }} !px-3 !py-1.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                Editar
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('myVehicles.edit', $vehicle->id) }}" class="{{ $styles['btn_secondary'] }} !px-3 !py-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                    Editar
+                                </a>
+                                @if(!$vehicle->policy()->active()->exists())
+                                    <form action="{{ route('myVehicles.destroy', $vehicle->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este vehículo?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-50 hover:bg-red-500 text-red-500 hover:text-white px-3 py-1.5 rounded-xl font-semibold transition-colors border border-red-200 hover:border-red-500 inline-flex items-center gap-2 text-sm">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </article>
                 @endforeach

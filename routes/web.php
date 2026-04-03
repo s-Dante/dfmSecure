@@ -65,13 +65,15 @@ Route::middleware('auth')->group(function () {
  * Rutas del asegurado
  */
 Route::middleware(['auth', 'role:insured'])->group(function () {
-    Route::get("/my-vehicle", [App\Http\Controllers\InsuredController::class, 'myVehicles'])->name('myVehicle');
+    Route::get("/my-vehicles", [\App\Http\Controllers\InsuredVehicleController::class, 'index'])->name('myVehicles');
+    Route::post("/my-vehicles", [\App\Http\Controllers\InsuredVehicleController::class, 'store'])->name('myVehicles.store');
+    Route::get("/my-vehicles/{id}/edit", [\App\Http\Controllers\InsuredVehicleController::class, 'edit'])->name('myVehicles.edit');
+    Route::put("/my-vehicles/{id}", [\App\Http\Controllers\InsuredVehicleController::class, 'update'])->name('myVehicles.update');
+    Route::delete("/my-vehicles/{id}", [\App\Http\Controllers\InsuredVehicleController::class, 'destroy'])->name('myVehicles.destroy');
 
-    Route::get("/edit-vehicle", function () {
-        return view('insured.my-vehicles-edit');
-    })->name('editVehicle');
-
-    Route::get("/my-policies", [App\Http\Controllers\InsuredController::class, 'myPolicies'])->name('myPolicies');
+    Route::get("/my-policies", [\App\Http\Controllers\InsuredPolicyController::class, 'index'])->name('myPolicies');
+    Route::get("/my-policies/create", [\App\Http\Controllers\InsuredPolicyController::class, 'create'])->name('myPolicies.create');
+    Route::post("/my-policies", [\App\Http\Controllers\InsuredPolicyController::class, 'store'])->name('myPolicies.store');
 });
 
 

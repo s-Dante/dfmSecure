@@ -23,18 +23,6 @@
         'btn_danger' => 'bg-white hover:bg-red-50 text-red-600 px-6 py-3 rounded-xl font-semibold transition-colors border border-red-200 mt-8 sm:mt-0',
     ];
 
-    // Dummy Vehicle to Edit (Simulating retrieval from DB)
-    $vehicle = [
-        'id' => 1,
-        'brand' => 'Ford',
-        'sub_brand' => 'Mustang',
-        'version' => 'GT V8',
-        'year' => '2024',
-        'color' => 'Gris Carbono',
-        'vin' => '1FA6P8CF4M5123456',
-        'plate' => 'ASD-987-X',
-        'has_policy' => true
-    ];
 @endphp
 
 <x-app-layout>
@@ -45,7 +33,7 @@
             <header class="{{ $styles['header_section'] }}">
                 <div>
                     <div class="flex items-center gap-3 mb-2">
-                        <a href="{{ route('myVehicle') }}"
+                        <a href="{{ route('myVehicles') }}"
                             class="w-10 h-10 rounded-xl bg-white border border-extra/50 flex items-center justify-center text-tertiary hover:text-accent hover:border-accent transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -54,8 +42,8 @@
                         </a>
                         <h1 class="{{ $styles['page_title'] }}">Editar Vehículo</h1>
                     </div>
-                    <p class="{{ $styles['page_subtitle'] }}">Actualiza la información de tu {{ $vehicle['brand'] }}
-                        {{ $vehicle['sub_brand'] }}</p>
+                    <p class="{{ $styles['page_subtitle'] }}">Actualiza la información de tu {{ $vehicle->vehicleModel->brand }}
+                        {{ $vehicle->vehicleModel->sub_brand }}</p>
                 </div>
             </header>
 
@@ -64,7 +52,7 @@
                 <div class="absolute top-0 right-0 w-48 h-48 bg-accent/5 rounded-bl-[150px] -z-10"></div>
 
                 <!-- Notice if vehicle has policy -->
-                @if($vehicle['has_policy'])
+                @if($vehicle->policy()->active()->exists())
                     <div class="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl flex gap-3 text-yellow-700">
                         <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -76,7 +64,7 @@
                     </div>
                 @endif
 
-                <form action="#" method="POST" class="space-y-6">
+                <form action="{{ route('myVehicles.update', $vehicle->id) }}" method="POST" class="space-y-6">
                     @csrf
                     <!-- Método Spoofing para futuras integraciones PUT/PATCH -->
                     @method('PUT')
@@ -95,55 +83,58 @@
                         <!-- Marca -->
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="brand">Marca</label>
-                            <input type="text" id="brand" name="brand" value="{{ $vehicle['brand'] }}"
-                                class="{{ $styles['input'] }}" required>
+                            <input type="text" id="brand" value="{{ $vehicle->vehicleModel->brand }}"
+                                class="{{ $styles['input_readonly'] }}" disabled>
                         </div>
 
                         <!-- Submarca / Modelo -->
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="sub_brand">Sub-Marca / Modelo</label>
-                            <input type="text" id="sub_brand" name="sub_brand" value="{{ $vehicle['sub_brand'] }}"
-                                class="{{ $styles['input'] }}" required>
+                            <input type="text" id="sub_brand" value="{{ $vehicle->vehicleModel->sub_brand }}"
+                                class="{{ $styles['input_readonly'] }}" disabled>
                         </div>
 
                         <!-- Versión -->
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="version">Versión</label>
-                            <input type="text" id="version" name="version" value="{{ $vehicle['version'] }}"
-                                class="{{ $styles['input'] }}" required>
+                            <input type="text" id="version" value="{{ $vehicle->vehicleModel->version }}"
+                                class="{{ $styles['input_readonly'] }}" disabled>
                         </div>
 
                         <!-- Año -->
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="year">Año</label>
-                            <input type="number" id="year" name="year" value="{{ $vehicle['year'] }}"
-                                class="{{ $styles['input'] }}" required>
+                            <input type="number" id="year" value="{{ $vehicle->vehicleModel->year }}"
+                                class="{{ $styles['input_readonly'] }}" disabled>
                         </div>
 
                         <!-- Color -->
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="color">Color</label>
-                            <input type="text" id="color" name="color" value="{{ $vehicle['color'] }}"
+                            <input type="text" id="color" name="color" value="{{ old('color', $vehicle->vehicleModel->color) }}"
                                 class="{{ $styles['input'] }}" required>
+                            @error('color') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Placas -->
                         <div class="{{ $styles['input_group'] }}">
                             <label class="{{ $styles['label'] }}" for="plate">Placas</label>
-                            <input type="text" id="plate" name="plate" value="{{ $vehicle['plate'] }}"
+                            <input type="text" id="plate" name="plate" value="{{ old('plate', $vehicle->plate) }}"
                                 class="{{ $styles['input'] }}" required>
+                            @error('plate') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- VIN (Readonly o Deshabilitado if has Policy) -->
                         <div class="{{ $styles['input_group'] }} md:col-span-2 mt-4 pt-4 border-t border-extra/30">
                             <label class="{{ $styles['label'] }}" for="vin">Número de Serie (VIN)</label>
-                            @if($vehicle['has_policy'])
-                                <input type="text" id="vin" name="vin" value="{{ $vehicle['vin'] }}"
+                            @if($vehicle->policy()->active()->exists())
+                                <input type="text" id="vin" name="vin" value="{{ $vehicle->vin }}"
                                     class="{{ $styles['input_readonly'] }}" readonly
                                     title="No modificable por política activa">
                             @else
-                                <input type="text" id="vin" name="vin" value="{{ $vehicle['vin'] }}"
+                                <input type="text" id="vin" name="vin" value="{{ old('vin', $vehicle->vin) }}"
                                     class="{{ $styles['input'] }} uppercase" maxlength="17" required>
+                                @error('vin') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             @endif
                         </div>
                     </div>
@@ -151,17 +142,8 @@
                     <!-- Form Actions -->
                     <div
                         class="flex flex-col sm:flex-row justify-between items-center pt-8 mt-8 border-t border-extra/30">
-                        <button type="button" class="{{ $styles['btn_danger'] }}">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                            Eliminar Vehículo
-                        </button>
-
                         <div class="flex gap-4 w-full sm:w-auto">
-                            <a href="{{ route('myVehicle') }}"
+                            <a href="{{ route('myVehicles') }}"
                                 class="{{ $styles['btn_secondary'] }} flex-1 sm:flex-none text-center">
                                 Cancelar
                             </a>

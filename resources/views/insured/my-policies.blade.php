@@ -37,31 +37,6 @@
         'cta_pattern' => 'absolute inset-0 opacity-10',
     ];
 
-    // Dummy Policies
-    $policies = [
-        [
-            'folio' => 'POL-8273-ABCD-1029',
-            'status' => 'Activa',
-            'plan' => 'Cobertura Amplia Plus',
-            'vehicle' => 'Ford Mustang GT V8 (2024)',
-            'validity_start' => '12/Oct/2023',
-            'validity_end' => '12/Oct/2024',
-            'deductible_material' => '5%',
-            'deductible_theft' => '10%',
-            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>'
-        ],
-        [
-            'folio' => 'POL-9182-WXYZ-4058',
-            'status' => 'Por Vencer',
-            'plan' => 'Responsabilidad Civil',
-            'vehicle' => 'Toyota Yaris Sedan (2018)',
-            'validity_start' => '05/Ene/2023',
-            'validity_end' => '05/Ene/2024',
-            'deductible_material' => 'N/A',
-            'deductible_theft' => '10%',
-            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>'
-        ]
-    ];
 @endphp
 
 <x-app-layout>
@@ -98,13 +73,13 @@
                 </div>
 
                 <div class="relative z-10 shrink-0 w-full md:w-auto">
-                    <a href="#" class="{{ $styles['btn_primary'] }} !px-8 !py-4 text-lg w-full">
+                    <a href="{{ route('myPolicies.create') }}" class="{{ $styles['btn_primary'] }} !px-8 !py-4 text-lg w-full">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                             </path>
                         </svg>
-                        Cotizar Seguro
+                        Adquirir Seguro
                     </a>
                 </div>
             </section>
@@ -123,12 +98,20 @@
                 <div class="{{ $styles['grid_container'] }}">
                     @foreach($policies as $policy)
                         @php
-                            $badgeStyle = match ($policy['status']) {
-                                'Activa' => $styles['status_active'],
+                            $label = method_exists($policy->status, 'label') ? $policy->status->label() : $policy->status->value;
+                            $badgeStyle = match ($label) {
+                                'Activa', 'Activo' => $styles['status_active'],
                                 'Por Vencer', 'Pendiente' => $styles['status_pending'],
-                                'Vencida' => $styles['status_expired'],
+                                'Vencida', 'Inactiva' => $styles['status_expired'],
                                 default => 'bg-gray-100 text-gray-700 border-gray-200'
                             };
+                            $info = $policy->plan->info ?? [];
+                            $danosMat = $info['deducible_danos'] ?? 'N/A';
+                            // If robo total exists in cobertura_vehiculo, show it
+                            $roboT = 'N/D';
+                            if (isset($info['cobertura_vehiculo']['robo_total'])) {
+                                $roboT = $info['cobertura_vehiculo']['robo_total'] ? ($info['deducible_robo'] ?? '10%') : 'No Amparado';
+                            }
                         @endphp
 
                         <article class="{{ $styles['card'] }}">
@@ -136,12 +119,12 @@
 
                             <div class="{{ $styles['card_header'] }}">
                                 <div>
-                                    <h3 class="{{ $styles['plan_title'] }}">{{ $policy['plan'] }}</h3>
-                                    <p class="{{ $styles['policy_folio'] }}">Folio: {{ $policy['folio'] }}</p>
+                                    <h3 class="{{ $styles['plan_title'] }}">{{ $policy->plan->name }}</h3>
+                                    <p class="{{ $styles['policy_folio'] }}">Folio: {{ $policy->folio }}</p>
                                 </div>
                                 <span
                                     class="px-3 py-1 rounded-full text-xs font-bold border {{ $badgeStyle }} whitespace-nowrap">
-                                    {{ $policy['status'] }}
+                                    {{ $label }}
                                 </span>
                             </div>
 
@@ -158,24 +141,24 @@
                                     </span>
                                 </div>
                                 <div class="text-base font-extrabold text-quaternary mb-2 mt-0">
-                                    {{ $policy['vehicle'] }}
+                                    {{ $policy->vehicle->vehicleModel->brand }} {{ $policy->vehicle->vehicleModel->sub_brand }} ({{ $policy->vehicle->vehicleModel->year }})
                                 </div>
 
                                 <!-- Vigencia -->
                                 <div class="{{ $styles['info_row'] }}">
                                     <span class="{{ $styles['info_label'] }}">Vigencia</span>
-                                    <span class="{{ $styles['info_value'] }}">{{ $policy['validity_start'] }} a
-                                        {{ $policy['validity_end'] }}</span>
+                                    <span class="{{ $styles['info_value'] }}">{{ $policy->begin_validity->format('d/M/Y') }} a
+                                        {{ $policy->end_validity->format('d/M/Y') }}</span>
                                 </div>
 
                                 <!-- Deducibles -->
                                 <div class="{{ $styles['info_row'] }}">
                                     <span class="{{ $styles['info_label'] }}">Daños Materiales</span>
-                                    <span class="{{ $styles['info_value'] }}">{{ $policy['deductible_material'] }}</span>
+                                    <span class="{{ $styles['info_value'] }}">{{ $danosMat }}</span>
                                 </div>
                                 <div class="{{ $styles['info_row'] }}">
                                     <span class="{{ $styles['info_label'] }}">Robo Total</span>
-                                    <span class="{{ $styles['info_value'] }}">{{ $policy['deductible_theft'] }}</span>
+                                    <span class="{{ $styles['info_value'] }}">{{ $roboT }}</span>
                                 </div>
                             </div>
 
@@ -184,7 +167,7 @@
                                 <a href="#" class="{{ $styles['btn_secondary'] }} flex-1 justify-center">
                                     Detalles
                                 </a>
-                                @if($policy['status'] === 'Por Vencer' || $policy['status'] === 'Vencida')
+                                @if($label === 'Por Vencer' || $label === 'Vencida')
                                     <a href="#" class="{{ $styles['btn_primary'] }} flex-1 justify-center !py-2 !px-4 text-sm">
                                         Renovar
                                     </a>

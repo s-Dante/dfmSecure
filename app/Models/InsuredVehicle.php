@@ -47,4 +47,9 @@ class InsuredVehicle extends Model
     {
         return $this->belongsTo(VehicleModel::class);
     }
+
+    public function policy()
+    {
+        return $this->hasOne(\App\Models\Policy::class, 'vehicle_id');
+    }
 }
