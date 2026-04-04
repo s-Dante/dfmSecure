@@ -151,23 +151,6 @@ return $currentRoute === $route ? $styles['link_active'] : $styles['link'];
 
         <!-- Grupo: Supervisor -->
         @if (auth()->user()->isSupervisor())
-        <div class="{{ $styles['group'] }}">
-            <h3 class="{{ $styles['group_title'] }}">Supervisor</h3>
-
-            <a href="{{ route('search') }}" class="{{ $linkClass('search') }}">
-                @if($currentRoute === 'search')
-                <div class="{{ $styles['active_indicator'] }}"></div>
-                @endif
-                <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <span>Buscar Expedientes</span>
-            </a>
-
-
-        </div>
         @endif
 
         <!-- Grupo: Administrador -->
