@@ -196,4 +196,49 @@ class AdjusterSinisterController extends Controller
             'message' => 'Chunk ' . $chunkIndex . ' recibido correctamente'
         ]);
     }
+
+    public function edit(Request $request, $id)
+    {
+        $sinister = Sinister::with(['policy.vehicle.vehicleModel', 'policy.insured', 'multimedia'])
+            ->findOrFail($id);
+
+        return view('adjuster.sinister-edit', compact('sinister'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $sinister = Sinister::findOrFail($id);
+
+        $validated = $request->validate([
+            'occur_date' => 'required|date|before_or_equal:today',
+            'report_date' => 'required|date|before_or_equal:today',
+            'location' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        $sinister->update([
+            'occur_date' => $validated['occur_date'],
+            'report_date' => $validated['report_date'],
+            'location' => $validated['location'],
+            'description' => $validated['description'],
+        ]);
+
+        return redirect()->route('sinisterDetail', $sinister->id)->with('success', 'Siniestro actualizado exitosamente.');
+    }
+
+    public function deleteMedia(Request $request, $id)
+    {
+        $media = SinisterMultimedia::findOrFail($id);
+        
+        if (!empty($media->path_file) && \Storage::disk('public')->exists($media->path_file)) {
+            \Storage::disk('public')->delete($media->path_file);
+        }
+
+        $media->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Archivo eliminado correctamente'
+        ]);
+    }
 }

@@ -58,4 +58,20 @@ class InsuredPolicyController extends Controller
 
         return redirect()->route('myPolicies')->with('success', '¡Poliza adquirida exitosamente! Ahora tu vehiclo esta asegurado');
     }
+
+    public function show(Request $request, $id)
+    {
+        $user = $request->user();
+        $policy = $user->policies()->with(['vehicle.vehicleModel', 'plan'])->findOrFail($id);
+        return view('insured.my-policies-show', compact('policy'));
+    }
+
+    public function downloadPdf(Request $request, $id)
+    {
+        $user = $request->user();
+        $policy = $user->policies()->with(['vehicle.vehicleModel', 'plan'])->findOrFail($id);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.policy', compact('policy', 'user'));
+        return $pdf->download('Poliza_DFM_' . $policy->folio . '.pdf');
+    }
 }

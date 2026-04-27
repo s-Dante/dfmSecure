@@ -81,7 +81,7 @@ class ProfileController extends Controller
             $storage = $request->input('photo_storage', 'url');
             if ($storage === 'blob') {
                 $bytes = file_get_contents($request->file('photo')->getRealPath());
-                $user->profile_picture_blob = $bytes;
+                $user->profile_picture_blob = base64_encode($bytes);
                 $user->profile_picture_url  = null;
             } else {
                 // Guardar como archivo en storage/app/public/profiles/

@@ -27,7 +27,7 @@ class InsuredVehicleController extends Controller
             'version' => 'required|string',
             'color' => 'required|string',
             'vin' => 'required|string|unique:insured_vehicles,vin',
-            'plate' => 'required|string'
+            'plate' => 'required|string|unique:insured_vehicles,plate'
         ]);
 
         $vm = VehicleModel::firstOrCreate([
@@ -61,9 +61,9 @@ class InsuredVehicleController extends Controller
         $vehicle = $user->vehicles()->findOrFail($id);
 
         $validated = $request->validate([
-            'color' => 'requiredd|string',
+            'color' => 'required|string',
             'vin' => 'required|string|unique:insured_vehicles,vin,' . $vehicle->id,
-            'plate' => 'required|string'
+            'plate' => 'required|string|unique:insured_vehicles,plate,' . $vehicle->id
         ]);
 
         $vehicle->update([

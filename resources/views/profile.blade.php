@@ -48,7 +48,7 @@
     // Avatar URL
     $hasBlob   = !empty($user->profile_picture_blob);
     $avatarUrl = $hasBlob
-        ? route('media.profile', $user->id)
+        ? route('media.profile', $user->id) . '?v=' . time()
         : (!empty($user->profile_picture_url)
             ? asset($user->profile_picture_url)
             : 'https://ui-avatars.com/api/?name=' . urlencode($user->name . '+' . $user->father_lastname) . '&background=92AA74&color=fff&size=256');
@@ -109,7 +109,7 @@
                         @if($user->birth_date)
                         <div class="{{ $styles['info_item'] }}">
                             <span class="{{ $styles['info_label'] }}">Fecha de Nacimiento</span>
-                            <span class="{{ $styles['info_value'] }}">{{ $user->birth_date->format('d / M / Y') }}</span>
+                            <span class="{{ $styles['info_value'] }}">{{ $user->birth_date->locale('es')->translatedFormat('d \d\e F \d\e Y') }}</span>
                         </div>
                         <div class="{{ $styles['info_item'] }}">
                             <span class="{{ $styles['info_label'] }}">Edad</span>

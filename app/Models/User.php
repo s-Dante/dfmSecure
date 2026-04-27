@@ -65,7 +65,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'phone' => 'string',
             'birth_date' => 'date',
-            'gender_id' => 'integer',
+            'gender' => \App\Enums\GenderEnum::class,
             'role_id' => 'integer',
             'address_id' => 'integer',
             'email_verified_at' => 'datetime',

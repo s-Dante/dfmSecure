@@ -36,10 +36,15 @@ class ConsultationController extends Controller
             $query->where('report_date', '<=', $request->fecha_fin);
         }
 
-        // Filtro: folio / sinister_number
+        // Filtro: folio / sinister_number / vin
         if ($request->filled('folio')) {
-            $query->where('sinister_number', 'like', '%' . $request->folio . '%')
-                ->orWhere('folio', 'like', '%' . $request->folio . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('sinister_number', 'like', '%' . $request->folio . '%')
+                  ->orWhere('folio', 'like', '%' . $request->folio . '%')
+                  ->orWhereHas('policy.vehicle', function ($vQuery) use ($request) {
+                      $vQuery->where('vin', 'like', '%' . $request->folio . '%');
+                  });
+            });
         }
 
         // Filtro: status

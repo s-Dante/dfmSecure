@@ -16,7 +16,7 @@
     // Avatar URL actual
     $hasBlob   = !empty($user->profile_picture_blob);
     $avatarUrl = $hasBlob
-        ? route('media.profile', $user->id)
+        ? route('media.profile', $user->id) . '?v=' . time()
         : (!empty($user->profile_picture_url)
             ? asset($user->profile_picture_url)
             : 'https://ui-avatars.com/api/?name=' . urlencode($user->name . '+' . $user->father_lastname) . '&background=92AA74&color=fff&size=256');

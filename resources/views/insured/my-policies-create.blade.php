@@ -1,5 +1,8 @@
 <x-app-layout>
     <x-slot name="content">
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
         <div class="w-full max-w-7xl mx-auto space-y-10 pb-12">
 
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center py-4 gap-4">
@@ -122,8 +125,14 @@
                 const selectedPlanNameEl = document.getElementById('selected_plan_name');
 
                 // 1. Manejar cambio de vehículo
-                vehicleSelect.addEventListener('change', function() {
-                    state.selectedVehicle = this.value;
+                // Inicializamos TomSelect
+                const ts = new TomSelect("#vehicle_select", {
+                    create: false,
+                    sortField: { field: "text", direction: "asc" }
+                });
+
+                ts.on('change', function(value) {
+                    state.selectedVehicle = value;
                     plansSection.style.display = state.selectedVehicle ? 'block' : 'none';
                     if (!state.selectedVehicle) confirmationSection.style.display = 'none';
                     renderPlans();

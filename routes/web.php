@@ -77,6 +77,8 @@ Route::middleware(['auth', 'role:insured'])->group(function () {
     Route::get("/my-policies", [InsuredPolicyController::class, 'index'])->name('myPolicies');
     Route::get("/my-policies/create", [InsuredPolicyController::class, 'create'])->name('myPolicies.create');
     Route::post("/my-policies", [InsuredPolicyController::class, 'store'])->name('myPolicies.store');
+    Route::get("/my-policies/{id}", [InsuredPolicyController::class, 'show'])->name('myPolicies.show');
+    Route::get("/my-policies/{id}/download", [InsuredPolicyController::class, 'downloadPdf'])->name('myPolicies.download');
 });
 
 
@@ -88,10 +90,10 @@ Route::middleware(['auth', 'role:adjuster'])->group(function () {
     Route::post("/sinister-register", [\App\Http\Controllers\AdjusterSinisterController::class, 'store'])->name('sinisterStore');
     Route::post("/sinister-register/upload-media", [\App\Http\Controllers\AdjusterSinisterController::class, 'uploadMedia'])->name('sinister.uploadMedia');
     Route::post("/sinister-register/upload-chunk", [\App\Http\Controllers\AdjusterSinisterController::class, 'uploadChunk'])->name('sinister.uploadChunk');
+    Route::delete("/sinister-media/{id}", [\App\Http\Controllers\AdjusterSinisterController::class, 'deleteMedia'])->name('sinister.deleteMedia');
 
-    Route::get("/sinister-edit", function () {
-        return view('adjuster.sinister-edit');
-    })->name('sinisterEdit');
+    Route::get("/sinister-edit/{id}", [\App\Http\Controllers\AdjusterSinisterController::class, 'edit'])->name('sinisterEdit');
+    Route::put("/sinister-edit/{id}", [\App\Http\Controllers\AdjusterSinisterController::class, 'update'])->name('sinisterUpdate');
 });
 
 

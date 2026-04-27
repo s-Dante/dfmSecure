@@ -3,8 +3,8 @@ $styles = [
 'sidebar' => 'w-72 shrink-0 h-[calc(100vh-2rem)] m-4 rounded-3xl bg-quaternary flex flex-col text-white shadow-2xl z-20 overflow-hidden',
 
 'logo_container' => 'p-6 pb-2 border-b border-white/10 shrink-0 bg-quaternary z-10',
-'logo_bg' => 'bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center',
-'logo_img' => 'h-14 w-auto object-contain scale-110',
+'logo_bg' => 'bg-white p-0 rounded-2xl shadow-lg flex items-center justify-center',
+'logo_img' => 'h-20 w-auto object-contain scale-180',
 
 'nav_container' => 'flex-1 py-6 px-4 flex flex-col gap-8 overflow-y-auto',
 
@@ -134,18 +134,6 @@ return $currentRoute === $route ? $styles['link_active'] : $styles['link'];
                 <span>Registrar Siniestro</span>
             </a>
 
-            <a href="{{ route('sinisterEdit') }}" class="{{ $linkClass('sinisterEdit') }}">
-                @if($currentRoute === 'sinisterEdit')
-                <div class="{{ $styles['active_indicator'] }}"></div>
-                @endif
-                <svg class="{{ $styles['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                    </path>
-                </svg>
-                <span>Editar Siniestro</span>
-            </a>
         </div>
         @endif
 

@@ -55,6 +55,12 @@ class MediaController extends Controller
 
         $user = User::findOrFail($userId);
         $blob = $this->readBlob($user->profile_picture_blob);
+        
+        // Attempt to decode if it is base64 encoded
+        if (!empty($blob) && base64_encode(base64_decode($blob, true)) === $blob) {
+            $blob = base64_decode($blob);
+        }
+        
         abort_if(empty($blob), 404);
 
         // Intentamos detectar el mime del blob

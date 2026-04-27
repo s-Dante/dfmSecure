@@ -27,10 +27,11 @@ $styles = [
 'header' => 'w-full bg-white shadow-sm sticky top-0 z-50',
 'header_container' => 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
 'header_flex' => 'flex justify-between items-center h-20',
-'logo_img' => 'h-40 l-[10px] w-auto object-contain',
-'nav' => 'hidden md:flex space-x-6 items-center',
-'btn_ghost' => 'text-quaternary font-medium hover:text-accent transition-colors duration-200',
-'btn_primary' => 'bg-accent hover:bg-[#7d9460] text-white font-medium py-2 px-6 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md',
+'logo_img_mobile' => 'h-10 w-auto object-contain md:hidden',
+'logo_img_desktop' => 'hidden md:block h-16 lg:h-40 w-auto object-contain',
+'nav' => 'flex space-x-2 md:space-x-6 items-center',
+'btn_ghost' => 'text-quaternary font-medium hover:text-accent transition-colors duration-200 flex items-center justify-center p-2 md:p-0',
+'btn_primary' => 'bg-accent hover:bg-[#7d9460] text-white font-medium py-2 px-3 md:px-6 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md flex items-center justify-center',
 
 // Hero
 'hero_section' => 'relative bg-quaternary text-white overflow-hidden max-w-7xl mx-auto rounded-3xl mt-6 sm:mt-8 shadow-xl',
@@ -98,17 +99,23 @@ $styles = [
             <div class="{{ $styles['header_flex'] }}">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <img class="{{ $styles['logo_img'] }}" src="{{ asset('/logos/DFM_SECURE_LOGO.png') }}"
-                        alt="DFM SECURE">
+                    <img class="{{ $styles['logo_img_mobile'] }}" src="{{ asset('/logos/DFM_SECURE_IMG.png') }}" alt="DFM SECURE">
+                    <img class="{{ $styles['logo_img_desktop'] }}" src="{{ asset('/logos/DFM_SECURE_LOGO.png') }}" alt="DFM SECURE">
                 </div>
 
                 <!-- Navigation -->
                 <nav class="{{ $styles['nav'] }}">
-                    <a href="{{ route('logIn') }}" class="{{ $styles['btn_ghost'] }}">
-                        Iniciar Sesión
+                    <a href="{{ route('logIn') }}" class="{{ $styles['btn_ghost'] }}" title="Iniciar Sesión">
+                        <svg class="w-6 h-6 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span class="hidden md:inline">Iniciar Sesión</span>
                     </a>
-                    <a href="{{ route('signIn') }}" class="{{ $styles['btn_primary'] }}">
-                        Registrarse
+                    <a href="{{ route('signIn') }}" class="{{ $styles['btn_primary'] }}" title="Registrarse">
+                        <svg class="w-6 h-6 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        </svg>
+                        <span class="hidden md:inline">Registrarse</span>
                     </a>
                 </nav>
             </div>

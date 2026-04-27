@@ -164,7 +164,7 @@
 
                             <!-- Botones Acciones -->
                             <div class="mt-6 flex gap-3 pt-4 border-t border-extra/30">
-                                <a href="#" class="{{ $styles['btn_secondary'] }} flex-1 justify-center">
+                                <a href="{{ route('myPolicies.show', $policy->id) }}" class="{{ $styles['btn_secondary'] }} flex-1 justify-center">
                                     Detalles
                                 </a>
                                 @if($label === 'Por Vencer' || $label === 'Vencida')
@@ -172,7 +172,7 @@
                                         Renovar
                                     </a>
                                 @endif
-                                <a href="#"
+                                <a href="{{ route('myPolicies.download', $policy->id) }}"
                                     class="p-2 bg-secondary/20 hover:bg-black text-quaternary hover:text-white rounded-xl transition-colors border border-extra/50"
                                     title="Descargar Póliza (PDF)">
                                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor"

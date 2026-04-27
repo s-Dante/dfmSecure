@@ -28,6 +28,9 @@
 
 <x-app-layout>
     <x-slot name="content">
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
         <div class="{{ $styles['page_container'] }}">
 
             <!-- Encabezado -->
@@ -142,21 +145,21 @@
                     </div>
 
                     <!-- Drag and Drop Base Area -->
-                    <div id="dropzone" class="{{ $styles['upload_area'] }}">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                            </svg>
+                    <div id="dropzoneContainer" class="flex flex-col">
+                        <div id="dropzone" class="{{ $styles['upload_area'] }}">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                                <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-quaternary mb-1">Cargar Fotografías y Videos</h3>
+                            <p class="text-sm text-tertiary">Agrega tus archivos haciendo clic en esta área.</p>
+                            <p class="text-xs font-mono text-tertiary mt-4">Nota: Archivos BLOB limitados a 5MB.</p>
                         </div>
-                        <h3 class="text-lg font-bold text-quaternary mb-1">Cargar Fotografías y Videos</h3>
-                        <p class="text-sm text-tertiary">Agrega tus archivos haciendo clic en esta área.</p>
-                        <p class="text-xs font-mono text-tertiary mt-4">Nota: Archivos BLOB limitados a 5MB.</p>
                         
-                        <!-- Using multiple inputs programmatically to support selecting different configurations -->
+                        <!-- Contenedor dinámico de archivos seleccionados -->
+                        <div id="fileListContainer" class="flex flex-col gap-4"></div>
                     </div>
-                    
-                    <!-- Contenedor dinámico de archivos seleccionados -->
-                    <div id="fileListContainer" class="mt-6 flex flex-col gap-4"></div>
 
                 </div>
 
@@ -182,14 +185,54 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Inicializar TomSelect en el selector de póliza
+        new TomSelect("#policy_id", {
+            create: false,
+            dropdownParent: 'body',
+            sortField: { field: "text", direction: "asc" }
+        });
+
         const MAX_FILES = 10;
         const BLOB_MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
         let totalFiles = 0;
         const dropzone = document.getElementById('dropzone');
+        const dropzoneContainer = document.getElementById('dropzoneContainer');
         const fileListContainer = document.getElementById('fileListContainer');
         const filesCountLabel = document.getElementById('filesCount');
         const submitBtn = document.getElementById('submitBtn');
+
+        function updateDropzoneUI() {
+            if (totalFiles > 0) {
+                dropzone.className = "border-2 border-dashed border-extra/50 rounded-xl p-4 flex flex-row items-center justify-center text-center hover:border-accent hover:bg-secondary/10 transition-colors cursor-pointer group gap-4 mt-4";
+                dropzone.innerHTML = `
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                    <h3 class="text-sm font-bold text-quaternary mb-0">Agregar más archivos</h3>
+                `;
+                // Mover dropzone abajo de la lista
+                dropzoneContainer.appendChild(dropzone);
+            } else {
+                dropzone.className = "border-2 border-dashed border-extra/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-accent hover:bg-secondary/10 transition-colors cursor-pointer group mb-4";
+                dropzone.innerHTML = `
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-quaternary mb-1">Cargar Fotografías y Videos</h3>
+                    <p class="text-sm text-tertiary">Agrega tus archivos haciendo clic en esta área.</p>
+                    <p class="text-xs font-mono text-tertiary mt-4">Nota: Archivos BLOB limitados a 5MB.</p>
+                `;
+                // Mover dropzone arriba de la lista
+                dropzoneContainer.insertBefore(dropzone, fileListContainer);
+            }
+
+            if (totalFiles >= MAX_FILES) {
+                dropzone.style.display = 'none';
+            } else {
+                dropzone.style.display = 'flex';
+            }
+        }
 
         dropzone.addEventListener('click', function() {
             if (totalFiles >= MAX_FILES) {
@@ -262,8 +305,8 @@
                 }
 
                 // Deshabilitar momentaneamente UI si está procesando muchos archivos (simulando Loader ligero)
-                const originalText = dropzone.querySelector('h3').innerText;
-                dropzone.querySelector('h3').innerText = "Procesando...";
+                const originalHTML = dropzone.innerHTML;
+                dropzone.innerHTML = "<h3 class='text-sm font-bold text-quaternary'>Procesando archivos...</h3>";
                 dropzone.style.pointerEvents = 'none';
 
                 for (let file of selectedFiles) {
@@ -272,9 +315,9 @@
                     attachSingleFileBlock(processedFile);
                 }
 
-                // Restaurar UI
-                dropzone.querySelector('h3').innerText = originalText;
+                // Restaurar UI y actualizar apariencia
                 dropzone.style.pointerEvents = 'auto';
+                updateDropzoneUI();
             });
 
             input.click();
@@ -363,6 +406,7 @@
                 fileBlock.remove();
                 totalFiles--;
                 filesCountLabel.innerText = totalFiles;
+                updateDropzoneUI();
             });
 
             selectContainer.appendChild(typeLabel);
@@ -377,6 +421,8 @@
 
             totalFiles++;
             filesCountLabel.innerText = totalFiles;
+            // updateDropzoneUI() se llama después del bucle en el change event, pero 
+            // si se añade un archivo singularmente, también deberíamos llamarlo aquí (opcional)
         }
 
         // --- SUBIDA ASÍNCRONA (AJAX CHUNKED) ---
